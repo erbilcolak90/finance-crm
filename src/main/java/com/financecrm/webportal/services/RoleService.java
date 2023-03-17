@@ -11,6 +11,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 public class RoleService {
 
@@ -56,9 +58,10 @@ public class RoleService {
         }
     }
 
-    public Page<Role> getAllRoles(Pagination pagination) {
-        Pageable pageable = PageRequest.of(pagination.getPage(), pagination.getSize(), Sort.by(Sort.Direction.valueOf(pagination.getSortBy().toString()), pagination.getFieldName()));
-        return roleRepository.findAll(pageable);
+    public List<Role> getAllRoles(Pagination pagination) {
+        // TODO: pagination - replaced with List<Role>
+        // Pageable pageable = PageRequest.of(pagination.getPage(), pagination.getSize(), Sort.by(Sort.Direction.valueOf(pagination.getSortBy().toString()), pagination.getFieldName()));
+        return roleRepository.findAll();
     }
 
 }

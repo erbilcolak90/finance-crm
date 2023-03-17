@@ -5,13 +5,11 @@ import com.financecrm.webportal.services.CustomUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/user")
+@CrossOrigin
 public class UserController {
 
     private CustomUserService customUserService;
@@ -21,7 +19,7 @@ public class UserController {
         this.customUserService = customUserService;
     }
 
-    @GetMapping("getUserById")
+    @PostMapping("/getUserById")
     public ResponseEntity<UserPayload> getUserById(@RequestParam String id){
         UserPayload result = customUserService.getUserById(id);
         if(result != null){

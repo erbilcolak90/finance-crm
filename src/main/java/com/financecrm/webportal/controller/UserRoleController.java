@@ -1,5 +1,6 @@
 package com.financecrm.webportal.controller;
 
+import com.financecrm.webportal.entities.UserRole;
 import com.financecrm.webportal.services.UserRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,6 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/userRole")
+@CrossOrigin
 public class UserRoleController {
 
     private UserRoleService userRoleService;
@@ -43,7 +45,7 @@ public class UserRoleController {
 
     @GetMapping("/getUserRolesByUserId")
     public ResponseEntity<?> getUserRolesByUserId(String userId){
-        List<String> result = userRoleService.getUserRolesByUserId(userId);
+        List<UserRole> result = userRoleService.getUserRolesByUserId(userId);
         if (result != null) {
             return new ResponseEntity<>(result, HttpStatus.OK);
         } else {

@@ -1,6 +1,7 @@
 package com.financecrm.webportal.services;
 
 import com.financecrm.webportal.entities.User;
+import com.financecrm.webportal.entities.UserRole;
 import com.financecrm.webportal.enums.Role;
 import com.financecrm.webportal.enums.UserStatus;
 import com.financecrm.webportal.input.UserInput;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -66,6 +68,7 @@ public class CustomUserService {
 
     public UserPayload getUserById(String id){
         User db_user = userRepository.findById(id).orElse(null);
+        List<UserRole> db_userRoles = userRoleService.getUserRolesByUserId(id);
         if(db_user != null){
             UserPayload data = new UserPayload();
             data.setId(db_user.getId());
@@ -74,6 +77,7 @@ public class CustomUserService {
             data.setEmail(db_user.getEmail());
             data.setPhone(db_user.getPhone());
             data.setStatus(db_user.getStatus());
+            data.setRoles(db_userRoles);
             return data;
         }
         return null;

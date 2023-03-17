@@ -23,7 +23,7 @@ public class UserRoleService {
         this.customUserService = customUserService;
     }
 
-    public List<String> getUserRolesByUserId(String userId){
+    public List<UserRole> getUserRolesByUserId(String userId){
         User user = customUserService.findByUserId(userId);
         if(user != null){
             return userRoleRepository.getUserRolesByUserId(userId);

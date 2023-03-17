@@ -1,6 +1,7 @@
 package com.financecrm.webportal.auth;
 
 import com.financecrm.webportal.entities.User;
+import com.financecrm.webportal.entities.UserRole;
 import com.financecrm.webportal.repositories.RoleRepository;
 import com.financecrm.webportal.repositories.UserRoleRepository;
 import org.springframework.security.core.GrantedAuthority;
@@ -27,10 +28,10 @@ public class SecurityUser implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
 
         List<GrantedAuthority> roles = new ArrayList<>();
-        List<String> roleList = userRoleRepository.getUserRolesByUserId(user.getId());
+        List<UserRole> roleList = userRoleRepository.getUserRolesByUserId(user.getId());
 
-        for(String role : roleList){
-            roleRepository.findById(role).ifPresent(db_role -> roles.add(new SimpleGrantedAuthority("ROLE_" + db_role.getName())));
+        for(UserRole role : roleList){
+            roleRepository.findById(role.getId()).ifPresent(db_role -> roles.add(new SimpleGrantedAuthority("ROLE_" + db_role.getName())));
         }
 
         return roles;
