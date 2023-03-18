@@ -19,5 +19,5 @@ public class UserPayload {
     private String email;
     private String phone;
     private UserStatus status;
-    private List<UserRole> roles;
+    private List<String> roles;
 }

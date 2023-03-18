@@ -4,6 +4,7 @@ import com.financecrm.webportal.entities.User;
 import com.financecrm.webportal.entities.UserRole;
 import com.financecrm.webportal.enums.Role;
 import com.financecrm.webportal.enums.UserStatus;
+import com.financecrm.webportal.input.AddRoleToUserInput;
 import com.financecrm.webportal.input.UserInput;
 import com.financecrm.webportal.payload.UserPayload;
 import com.financecrm.webportal.repositories.UserRepository;
@@ -56,7 +57,8 @@ public class CustomUserService {
             user.setCreateDate(date);
             user.setUpdateDate(date);
             userRepository.save(user);
-            userRoleService.addRoleToUser(user.getId(), Role.USER.toString());
+            AddRoleToUserInput addRoleToUserInput = new AddRoleToUserInput(user.getId(), Role.USER.toString());
+            userRoleService.addRoleToUser(addRoleToUserInput);
 
             return true;
         }
@@ -67,7 +69,7 @@ public class CustomUserService {
 
     public UserPayload getUserById(String id){
         User db_user = userRepository.findById(id).orElse(null);
-        List<UserRole> db_userRoles = userRoleService.getUserRolesByUserId(id);
+        List<String> db_userRoles = userRoleService.getUserRolesByUserId(id);
         if(db_user != null){
             UserPayload user = new UserPayload();
             user.setId(db_user.getId());
