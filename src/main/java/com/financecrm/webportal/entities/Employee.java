@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.time.OffsetDateTime;
+import java.util.Date;
 
 @Data
 @NoArgsConstructor
@@ -29,6 +29,6 @@ public class Employee {
     private JobTitle jobTitle;
     private EmployeeStatus status;
     private boolean isDeleted;
-    private OffsetDateTime createDate;
-    private OffsetDateTime updateDate;
+    private Date createDate;
+    private Date updateDate;
 }

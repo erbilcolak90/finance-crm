@@ -5,12 +5,11 @@ import com.financecrm.webportal.input.LoginInput;
 import com.financecrm.webportal.input.UserInput;
 import com.financecrm.webportal.payload.LoginPayload;
 import com.financecrm.webportal.payload.LogoutPayload;
-import com.financecrm.webportal.payload.SignUp;
+import com.financecrm.webportal.payload.SignUpPayload;
 import com.financecrm.webportal.services.CustomUserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -72,10 +71,10 @@ public class AuthController {
     }
 
     @PostMapping("/signUp")
-    public ResponseEntity<SignUp> signUp(@RequestBody UserInput userInput) throws BadCredentialsException {
+    public ResponseEntity<SignUpPayload> signUp(@RequestBody UserInput userInput) throws BadCredentialsException {
         try {
             if (customUserService.signUp(userInput)) {
-                return ResponseEntity.ok(new SignUp(true));
+                return ResponseEntity.ok(new SignUpPayload(true));
             } else {
                 throw new BadCredentialsException("This user is already exist");
             }

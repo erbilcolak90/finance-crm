@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class SignUp {
+public class SignUpPayload {
 
     private boolean status;
 }

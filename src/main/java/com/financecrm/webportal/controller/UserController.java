@@ -21,7 +21,7 @@ public class UserController {
     }
 
     @PostMapping("/getUserById")
-    public ResponseEntity<UserPayload> getUserById(@RequestBody String id){
+    public ResponseEntity<UserPayload> getUserById(@RequestParam String id){
         try{
             UserPayload result = customUserService.getUserById(id);
             if(result != null){

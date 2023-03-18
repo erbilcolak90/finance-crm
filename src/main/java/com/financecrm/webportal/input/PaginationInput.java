@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class Pagination {
+public class PaginationInput {
 
     private int page;
     private int size;

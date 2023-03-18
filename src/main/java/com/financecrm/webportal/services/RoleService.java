@@ -1,7 +1,7 @@
 package com.financecrm.webportal.services;
 
 import com.financecrm.webportal.entities.Role;
-import com.financecrm.webportal.input.Pagination;
+import com.financecrm.webportal.input.PaginationInput;
 import com.financecrm.webportal.repositories.RoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -63,7 +63,7 @@ public class RoleService {
         }
     }
 
-    public List<Role> getAllRoles(Pagination pagination) {
+    public List<Role> getAllRoles(PaginationInput paginationInput) {
         // TODO: pagination - replaced with List<Role>
         // Pageable pageable = PageRequest.of(pagination.getPage(), pagination.getSize(), Sort.by(Sort.Direction.valueOf(pagination.getSortBy().toString()), pagination.getFieldName()));
         return roleRepository.findAll();

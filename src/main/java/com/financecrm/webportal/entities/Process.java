@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.time.OffsetDateTime;
+import java.util.Date;
 
 @Data
 @NoArgsConstructor
@@ -20,5 +20,5 @@ public class Process {
     private String userId;
     private String employeeId;
     private ProcessType processType;
-    private OffsetDateTime createDate;
+    private Date createDate;
 }

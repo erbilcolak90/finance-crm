@@ -1,29 +1,21 @@
-package com.financecrm.webportal.entities;
+package com.financecrm.webportal.payload.uservalidationdocument;
 
 import com.financecrm.webportal.enums.UserValidationDocumentStatus;
 import com.financecrm.webportal.enums.UserValidationDocumentType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
 
-@Data
-@NoArgsConstructor
 @AllArgsConstructor
-@Document("UserValidationDocuments")
-public class UserValidationDocument {
+@NoArgsConstructor
+@Data
+public class UserValidationDocumentPayload {
 
-    @Id
     private String id;
-    private String userId;
     private String url;
     private UserValidationDocumentType type;
     private UserValidationDocumentStatus status;
-    private boolean isDeleted;
     private Date createDate;
-    private Date updateDate;
-
 }
