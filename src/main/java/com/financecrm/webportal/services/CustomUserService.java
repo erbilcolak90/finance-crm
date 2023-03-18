@@ -41,23 +41,22 @@ public class CustomUserService {
 
     @Transactional
     public boolean signUp(UserInput userInput){
-        User user = userRepository.findByEmail(userInput.getEmail());
-        if(user == null){
-            User db_user = new User();
-            //OffsetDateTime date = OffsetDateTime.now();
+        User db_user = userRepository.findByEmail(userInput.getEmail());
+        if(db_user == null){
+            User user = new User();
             Date date = new Date();
-            db_user.setEmail(userInput.getEmail());
-            db_user.setPassword(bCryptPasswordEncoder.encode(userInput.getPassword()));
-            db_user.setName(userInput.getName());
-            db_user.setSurname(userInput.getSurname());
-            db_user.setPhone(userInput.getPhone());
-            db_user.setStatus(UserStatus.WAITING);
-            db_user.setRepresentativeEmployeeId(null);
-            db_user.setDeleted(false);
-            db_user.setCreateDate(date);
-            db_user.setUpdateDate(date);
-            userRepository.save(db_user);
-            userRoleService.addRoleToUser(db_user.getId(), Role.USER.toString());
+            user.setEmail(userInput.getEmail());
+            user.setPassword(bCryptPasswordEncoder.encode(userInput.getPassword()));
+            user.setName(userInput.getName());
+            user.setSurname(userInput.getSurname());
+            user.setPhone(userInput.getPhone());
+            user.setStatus(UserStatus.WAITING);
+            user.setRepresentativeEmployeeId(null);
+            user.setDeleted(false);
+            user.setCreateDate(date);
+            user.setUpdateDate(date);
+            userRepository.save(user);
+            userRoleService.addRoleToUser(user.getId(), Role.USER.toString());
 
             return true;
         }
@@ -70,15 +69,15 @@ public class CustomUserService {
         User db_user = userRepository.findById(id).orElse(null);
         List<UserRole> db_userRoles = userRoleService.getUserRolesByUserId(id);
         if(db_user != null){
-            UserPayload data = new UserPayload();
-            data.setId(db_user.getId());
-            data.setName(db_user.getName());
-            data.setSurname(db_user.getSurname());
-            data.setEmail(db_user.getEmail());
-            data.setPhone(db_user.getPhone());
-            data.setStatus(db_user.getStatus());
-            data.setRoles(db_userRoles);
-            return data;
+            UserPayload user = new UserPayload();
+            user.setId(db_user.getId());
+            user.setName(db_user.getName());
+            user.setSurname(db_user.getSurname());
+            user.setEmail(db_user.getEmail());
+            user.setPhone(db_user.getPhone());
+            user.setStatus(db_user.getStatus());
+            user.setRoles(db_userRoles);
+            return user;
         }
         return null;
     }

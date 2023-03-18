@@ -3,9 +3,10 @@ package com.financecrm.webportal.controller;
 import com.financecrm.webportal.payload.UserPayload;
 import com.financecrm.webportal.services.CustomUserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import javax.security.auth.login.AccountNotFoundException;
 
 @RestController
 @RequestMapping("/user")
@@ -20,13 +21,18 @@ public class UserController {
     }
 
     @PostMapping("/getUserById")
-    public ResponseEntity<UserPayload> getUserById(@RequestParam String id){
-        UserPayload result = customUserService.getUserById(id);
-        if(result != null){
-            return new ResponseEntity<>(result, HttpStatus.OK);
-        }else{
-            return new ResponseEntity<>(null,HttpStatus.BAD_REQUEST);
+    public ResponseEntity<UserPayload> getUserById(@RequestBody String id){
+        try{
+            UserPayload result = customUserService.getUserById(id);
+            if(result != null){
+                return ResponseEntity.ok(result);
+            }else{
+                throw new AccountNotFoundException("User not found");
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
+        return null;
     }
 
 }

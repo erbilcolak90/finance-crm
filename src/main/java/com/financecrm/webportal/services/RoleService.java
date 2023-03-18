@@ -4,10 +4,6 @@ import com.financecrm.webportal.entities.Role;
 import com.financecrm.webportal.input.Pagination;
 import com.financecrm.webportal.repositories.RoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +17,15 @@ public class RoleService {
     @Autowired
     public RoleService(RoleRepository roleRepository) {
         this.roleRepository = roleRepository;
+    }
+
+    public String findById(String roleId){
+        Role role = roleRepository.findById(roleId).orElse(null);
+        if(role != null){
+            return role.getName();
+        }else{
+            return null;
+        }
     }
 
     @Transactional

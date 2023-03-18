@@ -1,13 +1,15 @@
 package com.financecrm.webportal.controller;
 
 import com.financecrm.webportal.entities.UserRole;
+import com.financecrm.webportal.input.AddRoleToUserInput;
+import com.financecrm.webportal.input.DeleteRoleFromUserInput;
 import com.financecrm.webportal.services.UserRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
+import javax.security.auth.login.AccountNotFoundException;
+
 import java.util.List;
 
 @RestController
@@ -23,33 +25,32 @@ public class UserRoleController {
     }
 
     @PostMapping("/addRoleToUser")
-    public ResponseEntity<?> addRoleToUser(@RequestParam String userId, @RequestParam String roleName) {
-
-        String result = userRoleService.addRoleToUser(userId, roleName);
+    public ResponseEntity<String> addRoleToUser(@RequestBody AddRoleToUserInput addRoleToUserInput) throws AccountNotFoundException {
+        String result = userRoleService.addRoleToUser(addRoleToUserInput);
         if (result != null) {
-            return new ResponseEntity<>(result, HttpStatus.OK);
+            return ResponseEntity.ok(result);
         } else {
-            return new ResponseEntity<>("User or Role not found",HttpStatus.BAD_REQUEST);
+            throw new AccountNotFoundException("user or rolename not found");
         }
     }
 
     @PostMapping("/deleteRoleFromUser")
-    public ResponseEntity<?> deleteRoleFromUser(@RequestParam String userId,@RequestParam String roleName){
-        String result = userRoleService.deleteRoleFromUser(userId, roleName);
+    public ResponseEntity<String> deleteRoleFromUser(@RequestBody DeleteRoleFromUserInput deleteRoleFromUserInput) throws AccountNotFoundException {
+        String result = userRoleService.deleteRoleFromUser(deleteRoleFromUserInput);
         if (result != null) {
-            return new ResponseEntity<>(result, HttpStatus.OK);
+            return ResponseEntity.ok(result);
         } else {
-            return new ResponseEntity<>("User or Role not found",HttpStatus.BAD_REQUEST);
+            throw new AccountNotFoundException("user or rolename not found");
         }
     }
 
     @GetMapping("/getUserRolesByUserId")
-    public ResponseEntity<?> getUserRolesByUserId(String userId){
-        List<UserRole> result = userRoleService.getUserRolesByUserId(userId);
+    public ResponseEntity<List<String>> getUserRolesByUserId(@RequestBody String userId) throws AccountNotFoundException {
+        List<String> result = userRoleService.getUserRolesByUserId(userId);
         if (result != null) {
-            return new ResponseEntity<>(result, HttpStatus.OK);
+            return ResponseEntity.ok(result);
         } else {
-            return new ResponseEntity<>("User not found",HttpStatus.BAD_REQUEST);
+            throw new AccountNotFoundException("User not found");
         }
     }
 }
