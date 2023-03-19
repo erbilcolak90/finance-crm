@@ -13,6 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/userValidationDocument")
+@CrossOrigin
 public class UserValidationDocumentController {
 
     private UserValidationDocumentService userValidationDocumentService;
@@ -33,7 +34,7 @@ public class UserValidationDocumentController {
 
     }
 
-    @GetMapping("/getAllUserValidationDocumentByUserId")
+    @PostMapping("/getAllUserValidationDocumentByUserId")
     public ResponseEntity<List<UserValidationDocumentPayload>> getAllUserValidationDocumentByUserId(@RequestParam String userId, HttpServletRequest request){
         List<UserValidationDocumentPayload> result = userValidationDocumentService.getAllUserValidationDocumentByUserId(userId, request);
         if(result != null){
