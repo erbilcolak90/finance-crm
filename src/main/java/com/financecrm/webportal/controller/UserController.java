@@ -20,7 +20,7 @@ public class UserController {
     private CustomUserService customUserService;
 
     @PostMapping("/getUserById")
-    public ResponseEntity<UserPayload> getUserById(@RequestParam GetUserByIdInput getUserByIdInput){
+    public ResponseEntity<UserPayload> getUserById(@RequestBody GetUserByIdInput getUserByIdInput){
         try{
             UserPayload result = customUserService.getUserById(getUserByIdInput);
             if(result != null){

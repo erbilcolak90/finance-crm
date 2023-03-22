@@ -24,7 +24,7 @@ public class TokenManager {
     @Autowired
     private CustomUserService customUserService;
 
-    private static final int validity = 30 * 60 * 100000;
+    private static final int validity = 30 * 60 * 10000;
     Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
     public String generateToken(String email) {
