@@ -2,6 +2,12 @@ package com.financecrm.webportal.services;
 
 import com.financecrm.webportal.entities.Role;
 import com.financecrm.webportal.input.PaginationInput;
+import com.financecrm.webportal.input.role.CreateRoleInput;
+import com.financecrm.webportal.input.role.DeleteRoleByNameInput;
+import com.financecrm.webportal.input.role.GetRoleIdByRoleNameInput;
+import com.financecrm.webportal.payload.role.CreateRolePayload;
+import com.financecrm.webportal.payload.role.DeleteRoleByNamePayload;
+import com.financecrm.webportal.payload.role.GetRoleIdByRoleNamePayload;
 import com.financecrm.webportal.repositories.RoleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,37 +35,37 @@ public class RoleService {
     }
 
     @Transactional
-    public String createRole(String roleName) {
-        Role db_role = roleRepository.findByName(roleName);
+    public CreateRolePayload createRole(CreateRoleInput createRoleInput) {
+        Role db_role = roleRepository.findByName(createRoleInput.getRoleName());
         if (db_role == null) {
             Role role = new Role();
-            role.setName(roleName);
+            role.setName(createRoleInput.getRoleName());
             role.setDeleted(false);
             roleRepository.save(role);
-            log.info(roleName+ " saved");
-            return roleName + " role created";
+            log.info(createRoleInput.getRoleName()+ " saved");
+            return new CreateRolePayload(createRoleInput.getRoleName() + " role created");
         } else {
             return null;
         }
     }
 
     @Transactional
-    public Boolean deleteRoleByName(String roleName) {
-        Role db_role = roleRepository.findByName(roleName);
+    public DeleteRoleByNamePayload deleteRoleByName(DeleteRoleByNameInput deleteRoleByNameInput) {
+        Role db_role = roleRepository.findByName(deleteRoleByNameInput.getRoleName());
         if (db_role != null) {
             db_role.setDeleted(false);
             roleRepository.save(db_role);
-            return true;
+            return new DeleteRoleByNamePayload(true);
         } else {
             log.info("role is not found");
-            return false;
+            return new DeleteRoleByNamePayload(false);
         }
     }
 
-    public String getRoleIdByRoleName(String roleName) {
-        Role role = roleRepository.findByName(roleName);
+    public GetRoleIdByRoleNamePayload getRoleIdByRoleName(GetRoleIdByRoleNameInput getRoleIdByRoleNameInput) {
+        Role role = roleRepository.findByName(getRoleIdByRoleNameInput.getRoleName());
         if (role != null) {
-            return role.getId();
+            return new GetRoleIdByRoleNamePayload(role.getId());
         } else {
             return null;
         }

@@ -1,8 +1,13 @@
 package com.financecrm.webportal.controller;
 
-import com.financecrm.webportal.input.role.AddRoleToUserInput;
-import com.financecrm.webportal.input.role.DeleteRoleFromUserInput;
+import com.financecrm.webportal.input.userrole.AddRoleToUserInput;
+import com.financecrm.webportal.input.userrole.DeleteRoleFromUserInput;
+import com.financecrm.webportal.input.userrole.GetUserRolesByUserIdInput;
+import com.financecrm.webportal.payload.role.DeleteRoleByNamePayload;
+import com.financecrm.webportal.payload.userrole.AddRoleToUserPayload;
+import com.financecrm.webportal.payload.userrole.DeleteRoleFromUserPayload;
 import com.financecrm.webportal.services.UserRoleService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,19 +18,16 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/userRole")
+@RequiredArgsConstructor
 @CrossOrigin
 public class UserRoleController {
 
+    @Autowired
     private UserRoleService userRoleService;
 
-    @Autowired
-    public UserRoleController(UserRoleService userRoleService) {
-        this.userRoleService = userRoleService;
-    }
-
     @PostMapping("/addRoleToUser")
-    public ResponseEntity<String> addRoleToUser(@RequestBody AddRoleToUserInput addRoleToUserInput) throws AccountNotFoundException {
-        String result = userRoleService.addRoleToUser(addRoleToUserInput);
+    public ResponseEntity<AddRoleToUserPayload> addRoleToUser(@RequestBody AddRoleToUserInput addRoleToUserInput) throws AccountNotFoundException {
+        AddRoleToUserPayload result = userRoleService.addRoleToUser(addRoleToUserInput);
         if (result != null) {
             return ResponseEntity.ok(result);
         } else {
@@ -34,8 +36,8 @@ public class UserRoleController {
     }
 
     @PostMapping("/deleteRoleFromUser")
-    public ResponseEntity<String> deleteRoleFromUser(@RequestBody DeleteRoleFromUserInput deleteRoleFromUserInput) throws AccountNotFoundException {
-        String result = userRoleService.deleteRoleFromUser(deleteRoleFromUserInput);
+    public ResponseEntity<DeleteRoleFromUserPayload> deleteRoleFromUser(@RequestBody DeleteRoleFromUserInput deleteRoleFromUserInput) throws AccountNotFoundException {
+        DeleteRoleFromUserPayload result = userRoleService.deleteRoleFromUser(deleteRoleFromUserInput);
         if (result != null) {
             return ResponseEntity.ok(result);
         } else {
@@ -44,8 +46,8 @@ public class UserRoleController {
     }
 
     @GetMapping("/getUserRolesByUserId")
-    public ResponseEntity<List<String>> getUserRolesByUserId(@RequestBody String userId) throws AccountNotFoundException {
-        List<String> result = userRoleService.getUserRolesByUserId(userId);
+    public ResponseEntity<List<String>> getUserRolesByUserId(@RequestBody GetUserRolesByUserIdInput getUserRolesByUserIdInput) throws AccountNotFoundException {
+        List<String> result = userRoleService.getUserRolesByUserId(getUserRolesByUserIdInput);
         if (result != null) {
             return ResponseEntity.ok(result);
         } else {

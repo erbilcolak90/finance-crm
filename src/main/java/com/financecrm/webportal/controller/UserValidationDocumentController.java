@@ -4,6 +4,7 @@ import com.financecrm.webportal.input.uservalidationdocument.UserValidationDocum
 import com.financecrm.webportal.payload.uservalidationdocument.UserValidationDocumentPayload;
 import com.financecrm.webportal.services.UserValidationDocumentService;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -14,14 +15,11 @@ import java.util.List;
 @RestController
 @RequestMapping("/userValidationDocument")
 @CrossOrigin
+@RequiredArgsConstructor
 public class UserValidationDocumentController {
 
-    private UserValidationDocumentService userValidationDocumentService;
-
     @Autowired
-    public UserValidationDocumentController(UserValidationDocumentService userValidationDocumentService) {
-        this.userValidationDocumentService = userValidationDocumentService;
-    }
+    private UserValidationDocumentService userValidationDocumentService;
 
     @GetMapping("/getUserValidationDocumentById")
     public ResponseEntity<UserValidationDocumentPayload> getUserValidationDocumentById(@RequestParam String userValidationDocumentId, HttpServletRequest request){

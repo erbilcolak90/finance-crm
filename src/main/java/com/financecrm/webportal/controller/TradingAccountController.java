@@ -8,6 +8,7 @@ import com.financecrm.webportal.payload.tradingaccount.CreateTradingAccountPaylo
 import com.financecrm.webportal.payload.tradingaccount.DeleteTradingAccountPayload;
 import com.financecrm.webportal.payload.tradingaccount.TradingAccountPayload;
 import com.financecrm.webportal.services.TradingAccountService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -17,14 +18,12 @@ import javax.security.auth.login.AccountNotFoundException;
 
 @RestController
 @RequestMapping("/tradingAccount")
+@CrossOrigin
+@RequiredArgsConstructor
 public class TradingAccountController {
 
-    private TradingAccountService tradingAccountService;
-
     @Autowired
-    public TradingAccountController(TradingAccountService tradingAccountService) {
-        this.tradingAccountService = tradingAccountService;
-    }
+    private TradingAccountService tradingAccountService;
 
     @GetMapping("/getTradingAccountById")
     public ResponseEntity<TradingAccountPayload> getTradingAccountById(@RequestBody GetTradingAccountInput getTradingAccountInput) throws Exception {

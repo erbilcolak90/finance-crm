@@ -3,8 +3,10 @@ package com.financecrm.webportal.services;
 import com.financecrm.webportal.entities.User;
 import com.financecrm.webportal.enums.Role;
 import com.financecrm.webportal.enums.UserStatus;
-import com.financecrm.webportal.input.role.AddRoleToUserInput;
+import com.financecrm.webportal.input.userrole.AddRoleToUserInput;
+import com.financecrm.webportal.input.user.GetUserByIdInput;
 import com.financecrm.webportal.input.user.UserInput;
+import com.financecrm.webportal.input.userrole.GetUserRolesByUserIdInput;
 import com.financecrm.webportal.payload.user.UserPayload;
 import com.financecrm.webportal.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -74,9 +76,10 @@ public class CustomUserService {
         }
     }
 
-    public UserPayload getUserById(String id){
-        User db_user = userRepository.findById(id).orElse(null);
-        List<String> db_userRoles = userRoleService.getUserRolesByUserId(id);
+    public UserPayload getUserById(GetUserByIdInput getUserByIdInput){
+        User db_user = userRepository.findById(getUserByIdInput.getUserId()).orElse(null);
+        GetUserRolesByUserIdInput getUserRolesByUserIdInput = new GetUserRolesByUserIdInput(getUserByIdInput.getUserId());
+        List<String> db_userRoles = userRoleService.getUserRolesByUserId(getUserRolesByUserIdInput);
         if(db_user != null){
             UserPayload user = new UserPayload();
             user.setId(db_user.getId());
