@@ -7,7 +7,6 @@ import com.financecrm.webportal.entities.WalletAccount;
 import com.financecrm.webportal.enums.TradingAccountStatus;
 import com.financecrm.webportal.enums.UserStatus;
 import com.financecrm.webportal.enums.WalletAccountStatus;
-import com.financecrm.webportal.input.PaginationInput;
 import com.financecrm.webportal.input.tradingaccount.CreateTradingAccountInput;
 import com.financecrm.webportal.input.tradingaccount.DeleteTradingAccountInput;
 import com.financecrm.webportal.input.tradingaccount.GetAllTradingAccountsInput;
@@ -17,6 +16,7 @@ import com.financecrm.webportal.payload.tradingaccount.DeleteTradingAccountPaylo
 import com.financecrm.webportal.payload.tradingaccount.TradingAccountPayload;
 import com.financecrm.webportal.repositories.TradingAccountRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -31,6 +31,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class TradingAccountService {
 
     @Autowired
@@ -67,12 +68,14 @@ public class TradingAccountService {
             Date date = new Date();
             tradingAccount.setCreateDate(date);
             tradingAccount.setUpdateDate(date);
-
+            log.info(createTradingAccountInput.getUserId()+ " is adding to db");
             tradingAccountRepository.save(tradingAccount);
+            log.info(createTradingAccountInput.getUserId()+ " is added to db");
 
             return mapperService.convertToCreateTradingAccountPayload(tradingAccount);
 
         } else {
+            log.info("user not found ");
             return null;
         }
     }
@@ -84,9 +87,12 @@ public class TradingAccountService {
         if (db_tradingAccount != null) {
             db_tradingAccount.setDeleted(true);
             db_tradingAccount.setUpdateDate(new Date());
+            log.info(deleteTradingAccountInput.getId()+ " : is  deleting");
             tradingAccountRepository.save(db_tradingAccount);
+            log.info(deleteTradingAccountInput.getId()+ " : is  deleted");
             return new DeleteTradingAccountPayload(true);
         } else {
+            log.info("user not found ");
             return new DeleteTradingAccountPayload(false);
         }
 
@@ -104,6 +110,7 @@ public class TradingAccountService {
     public Page<TradingAccountPayload> getAllTradingAccountsByUserId(GetAllTradingAccountsInput getAllTradingAccountsInput) {
         Pageable pageable = PageRequest.of(getAllTradingAccountsInput.getPage(), getAllTradingAccountsInput.getSize(), Sort.by(Sort.Direction.valueOf(getAllTradingAccountsInput.getSortBy().toString()), getAllTradingAccountsInput.getFieldName()));
         Page<TradingAccount> tradingAccountPage = tradingAccountRepository.getAllTradingAccountsByUserId(getAllTradingAccountsInput.getUserId(),pageable);
+        log.info(getAllTradingAccountsInput.getUserId()+ " trading account list prepared");
         return tradingAccountPage.map(tradingAccount -> mapperService.convertToTradingAccountPayload(tradingAccount));
 
     }

@@ -9,6 +9,7 @@ import com.financecrm.webportal.payload.uservalidationdocument.UserValidationDoc
 import com.financecrm.webportal.repositories.UserValidationDocumentRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserValidationDocumentService {
 
     @Autowired
@@ -74,6 +76,7 @@ public class UserValidationDocumentService {
            userValidationDocument.setCreateDate(date);
            userValidationDocument.setUpdateDate(date);
            userValidationDocumentRepository.save(userValidationDocument);
+           log.info("user validation document saved"+ userValidationDocument.getId());
 
            return mapperService.convertToUserValidationDocumentPayload(userValidationDocument);
 

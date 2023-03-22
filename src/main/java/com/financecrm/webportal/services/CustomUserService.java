@@ -8,6 +8,7 @@ import com.financecrm.webportal.input.user.UserInput;
 import com.financecrm.webportal.payload.user.UserPayload;
 import com.financecrm.webportal.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CustomUserService {
 
     @Autowired
@@ -58,9 +60,12 @@ public class CustomUserService {
             user.setCreateDate(date);
             user.setUpdateDate(date);
             userRepository.save(user);
+            log.info(user.getId()+ " is signed");
             AddRoleToUserInput addRoleToUserInput = new AddRoleToUserInput(user.getId(), Role.USER.toString());
             userRoleService.addRoleToUser(addRoleToUserInput);
+            log.info(user.getId()+ " ROLE.USER added ");
             walletAccountService.createWalletAccount(user.getId());
+            log.info(user.getId()+ " 's wallet created");
 
             return true;
         }

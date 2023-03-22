@@ -4,6 +4,7 @@ import com.financecrm.webportal.entities.Role;
 import com.financecrm.webportal.input.PaginationInput;
 import com.financecrm.webportal.repositories.RoleRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,6 +13,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class RoleService {
 
     @Autowired
@@ -34,6 +36,7 @@ public class RoleService {
             role.setName(roleName);
             role.setDeleted(false);
             roleRepository.save(role);
+            log.info(roleName+ " saved");
             return roleName + " role created";
         } else {
             return null;
@@ -48,6 +51,7 @@ public class RoleService {
             roleRepository.save(db_role);
             return true;
         } else {
+            log.info("role is not found");
             return false;
         }
     }

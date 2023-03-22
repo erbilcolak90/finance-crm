@@ -6,6 +6,7 @@ import com.financecrm.webportal.input.role.AddRoleToUserInput;
 import com.financecrm.webportal.input.role.DeleteRoleFromUserInput;
 import com.financecrm.webportal.repositories.UserRoleRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +16,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserRoleService {
 
     @Autowired
@@ -53,7 +55,7 @@ public class UserRoleService {
             userRole.setUserId(user.getId());
             userRole.setRoleId(roleId);
             userRoleRepository.save(userRole);
-
+            log.info(userRole.getRoleId() + " role is added to user " + userRole.getUserId());
             return addRoleToUserInput.getRoleName() + " added to " + addRoleToUserInput.getUserId();
         } else {
             return "User or rolename not found";
@@ -70,6 +72,7 @@ public class UserRoleService {
                     .forEach(userRole -> {
                         userRole.setDeleted(true);
                         userRoleRepository.save(userRole);
+                        log.info(userRole.getRoleId() + " deleted from "+ userRole.getUserId());
                     });
 
             return "Role deleted from user";
