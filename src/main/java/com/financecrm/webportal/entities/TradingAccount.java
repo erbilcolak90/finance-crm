@@ -22,6 +22,7 @@ public class TradingAccount {
     private String id;
     private String userId;
     private String apiId;
+    private String walletAccountId;
     private Currency currency;
     private int balance;
     private int leverage;

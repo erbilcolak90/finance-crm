@@ -2,9 +2,10 @@ package com.financecrm.webportal.services;
 
 import com.financecrm.webportal.entities.User;
 import com.financecrm.webportal.entities.UserRole;
-import com.financecrm.webportal.input.AddRoleToUserInput;
-import com.financecrm.webportal.input.DeleteRoleFromUserInput;
+import com.financecrm.webportal.input.role.AddRoleToUserInput;
+import com.financecrm.webportal.input.role.DeleteRoleFromUserInput;
 import com.financecrm.webportal.repositories.UserRoleRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,18 +14,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class UserRoleService {
 
-    private UserRoleRepository userRoleRepository;
-    private RoleService roleService;
-    private CustomUserService customUserService;
-
     @Autowired
-    public UserRoleService(UserRoleRepository userRoleRepository, RoleService roleService, CustomUserService customUserService) {
-        this.userRoleRepository = userRoleRepository;
-        this.roleService = roleService;
-        this.customUserService = customUserService;
-    }
+    private UserRoleRepository userRoleRepository;
+    @Autowired
+    private RoleService roleService;
+    @Autowired
+    private CustomUserService customUserService;
 
     public List<String> getUserRolesByUserId(String userId) {
         User user = customUserService.findByUserId(userId);

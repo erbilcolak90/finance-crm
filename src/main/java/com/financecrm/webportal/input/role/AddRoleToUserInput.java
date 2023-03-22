@@ -1,4 +1,4 @@
-package com.financecrm.webportal.input;
+package com.financecrm.webportal.input.role;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,8 +7,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class LoginInput {
+public class AddRoleToUserInput {
 
-    private String email;
-    private String password;
+    private String userId;
+    private String roleName;
 }

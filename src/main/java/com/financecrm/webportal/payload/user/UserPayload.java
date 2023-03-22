@@ -1,4 +1,4 @@
-package com.financecrm.webportal.payload;
+package com.financecrm.webportal.payload.user;
 
 import com.financecrm.webportal.entities.UserRole;
 import com.financecrm.webportal.enums.UserStatus;

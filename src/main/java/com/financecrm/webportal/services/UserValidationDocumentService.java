@@ -8,6 +8,7 @@ import com.financecrm.webportal.input.uservalidationdocument.UserValidationDocum
 import com.financecrm.webportal.payload.uservalidationdocument.UserValidationDocumentPayload;
 import com.financecrm.webportal.repositories.UserValidationDocumentRepository;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,28 +18,26 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class UserValidationDocumentService {
 
+    @Autowired
     private UserValidationDocumentRepository userValidationDocumentRepository;
+    @Autowired
     private CustomUserService customUserService;
+    @Autowired
     private JwtTokenFilter jwtTokenFilter;
+    @Autowired
     private TokenManager tokenManager;
+    @Autowired
     private MapperService mapperService;
 
-    @Autowired
-    public UserValidationDocumentService(UserValidationDocumentRepository userValidationDocumentRepository, CustomUserService customUserService, JwtTokenFilter jwtTokenFilter, TokenManager tokenManager, MapperService mapperService) {
-        this.userValidationDocumentRepository = userValidationDocumentRepository;
-        this.customUserService = customUserService;
-        this.jwtTokenFilter = jwtTokenFilter;
-        this.tokenManager = tokenManager;
-        this.mapperService = mapperService;
-    }
 
     public UserValidationDocumentPayload getUserValidationDocumentById(String userValidationDocumentId, HttpServletRequest request){
 
         UserValidationDocument db_document = userValidationDocumentRepository.findById(userValidationDocumentId).orElse(null);
         if(db_document != null && !db_document.isDeleted()){
-            return mapperService.convertFromUserValidationDocument(db_document);
+            return mapperService.convertToUserValidationDocumentPayload(db_document);
         }
         return null;
     }
@@ -50,7 +49,7 @@ public class UserValidationDocumentService {
         if(userIdFromToken.equals(userId)){
             List<UserValidationDocument> documentList = userValidationDocumentRepository.findAllByUserId(userId);
             return documentList.stream()
-                    .map(mapperService::convertFromUserValidationDocument)
+                    .map(mapperService::convertToUserValidationDocumentPayload)
                     .collect(Collectors.toList());
 
         }
@@ -76,7 +75,7 @@ public class UserValidationDocumentService {
            userValidationDocument.setUpdateDate(date);
            userValidationDocumentRepository.save(userValidationDocument);
 
-           return mapperService.convertFromUserValidationDocument(userValidationDocument);
+           return mapperService.convertToUserValidationDocumentPayload(userValidationDocument);
 
        }else{
            return null;

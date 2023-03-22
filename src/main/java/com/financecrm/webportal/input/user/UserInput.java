@@ -1,4 +1,4 @@
-package com.financecrm.webportal.input;
+package com.financecrm.webportal.input.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

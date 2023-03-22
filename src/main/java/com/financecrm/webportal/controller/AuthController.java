@@ -1,11 +1,11 @@
 package com.financecrm.webportal.controller;
 
 import com.financecrm.webportal.auth.TokenManager;
-import com.financecrm.webportal.input.LoginInput;
-import com.financecrm.webportal.input.UserInput;
-import com.financecrm.webportal.payload.LoginPayload;
-import com.financecrm.webportal.payload.LogoutPayload;
-import com.financecrm.webportal.payload.SignUpPayload;
+import com.financecrm.webportal.input.login.LoginInput;
+import com.financecrm.webportal.input.user.UserInput;
+import com.financecrm.webportal.payload.auth.LoginPayload;
+import com.financecrm.webportal.payload.auth.LogoutPayload;
+import com.financecrm.webportal.payload.auth.SignUpPayload;
 import com.financecrm.webportal.services.CustomUserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -62,6 +62,8 @@ public class AuthController {
             if (tokenManager.tokenValidate(token)) {
                 tokenManager.logout(token);
                 return ResponseEntity.ok(new LogoutPayload(true));
+            }else{
+                return ResponseEntity.ok(new LogoutPayload(false));
             }
 
         } catch (Exception e) {

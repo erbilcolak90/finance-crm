@@ -1,12 +1,11 @@
 package com.financecrm.webportal.services;
 
 import com.financecrm.webportal.entities.User;
-import com.financecrm.webportal.entities.UserRole;
 import com.financecrm.webportal.enums.Role;
 import com.financecrm.webportal.enums.UserStatus;
-import com.financecrm.webportal.input.AddRoleToUserInput;
-import com.financecrm.webportal.input.UserInput;
-import com.financecrm.webportal.payload.UserPayload;
+import com.financecrm.webportal.input.role.AddRoleToUserInput;
+import com.financecrm.webportal.input.user.UserInput;
+import com.financecrm.webportal.payload.user.UserPayload;
 import com.financecrm.webportal.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +26,8 @@ public class CustomUserService {
     private UserRoleService userRoleService;
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
+    @Autowired
+    private WalletAccountService walletAccountService;
 
     public User findByName(String username) {
         return userRepository.findByName(username);
@@ -59,6 +60,7 @@ public class CustomUserService {
             userRepository.save(user);
             AddRoleToUserInput addRoleToUserInput = new AddRoleToUserInput(user.getId(), Role.USER.toString());
             userRoleService.addRoleToUser(addRoleToUserInput);
+            walletAccountService.createWalletAccount(user.getId());
 
             return true;
         }

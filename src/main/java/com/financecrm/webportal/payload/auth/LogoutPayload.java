@@ -1,4 +1,4 @@
-package com.financecrm.webportal.payload;
+package com.financecrm.webportal.payload.auth;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

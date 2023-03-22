@@ -1,8 +1,7 @@
 package com.financecrm.webportal.controller;
 
-import com.financecrm.webportal.entities.UserRole;
-import com.financecrm.webportal.input.AddRoleToUserInput;
-import com.financecrm.webportal.input.DeleteRoleFromUserInput;
+import com.financecrm.webportal.input.role.AddRoleToUserInput;
+import com.financecrm.webportal.input.role.DeleteRoleFromUserInput;
 import com.financecrm.webportal.services.UserRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

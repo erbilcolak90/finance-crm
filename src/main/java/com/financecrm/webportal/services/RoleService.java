@@ -3,6 +3,7 @@ package com.financecrm.webportal.services;
 import com.financecrm.webportal.entities.Role;
 import com.financecrm.webportal.input.PaginationInput;
 import com.financecrm.webportal.repositories.RoleRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,14 +11,11 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class RoleService {
 
-    private RoleRepository roleRepository;
-
     @Autowired
-    public RoleService(RoleRepository roleRepository) {
-        this.roleRepository = roleRepository;
-    }
+    private RoleRepository roleRepository;
 
     public String findById(String roleId){
         Role role = roleRepository.findById(roleId).orElse(null);

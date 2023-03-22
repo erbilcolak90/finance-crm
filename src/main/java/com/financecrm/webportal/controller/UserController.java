@@ -1,6 +1,6 @@
 package com.financecrm.webportal.controller;
 
-import com.financecrm.webportal.payload.UserPayload;
+import com.financecrm.webportal.payload.user.UserPayload;
 import com.financecrm.webportal.services.CustomUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
