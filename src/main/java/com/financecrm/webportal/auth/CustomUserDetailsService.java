@@ -4,6 +4,7 @@ import com.financecrm.webportal.entities.User;
 import com.financecrm.webportal.repositories.RoleRepository;
 import com.financecrm.webportal.repositories.UserRepository;
 import com.financecrm.webportal.repositories.UserRoleRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 
 @Service
+@RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
 
     @Autowired

@@ -108,9 +108,8 @@ public class TradingAccountService {
     }
 
     public Page<TradingAccountPayload> getAllTradingAccountsByUserId(GetAllTradingAccountsInput getAllTradingAccountsInput) {
-        // TODO: delete edilen hesapları dönmeyecek.
         Pageable pageable = PageRequest.of(getAllTradingAccountsInput.getPaginationInput().getPage(), getAllTradingAccountsInput.getPaginationInput().getSize(), Sort.by(Sort.Direction.valueOf(getAllTradingAccountsInput.getPaginationInput().getSortBy().toString()), getAllTradingAccountsInput.getPaginationInput().getFieldName()));
-        Page<TradingAccount> tradingAccountPage = tradingAccountRepository.getAllTradingAccountsByUserId(getAllTradingAccountsInput.getUserId(),pageable);
+        Page<TradingAccount> tradingAccountPage = tradingAccountRepository.findByUserIdAndIsDeletedFalse(getAllTradingAccountsInput.getUserId(),pageable);
         log.info(getAllTradingAccountsInput.getUserId()+ " trading account list prepared");
         return tradingAccountPage.map(tradingAccount -> mapperService.convertToTradingAccountPayload(tradingAccount));
 

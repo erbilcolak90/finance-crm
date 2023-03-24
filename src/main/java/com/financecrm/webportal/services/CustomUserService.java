@@ -32,6 +32,8 @@ public class CustomUserService {
     private BCryptPasswordEncoder bCryptPasswordEncoder;
     @Autowired
     private WalletAccountService walletAccountService;
+    @Autowired
+    private MapperService mapperService;
 
     public User findByName(String username) {
         return userRepository.findByName(username);
@@ -47,8 +49,8 @@ public class CustomUserService {
 
     @Transactional
     public boolean signUp(UserInput userInput){
-        User db_user = userRepository.findByEmail(userInput.getEmail());
-        if(db_user == null){
+        User userAtDatabase = userRepository.findByEmail(userInput.getEmail());
+        if(userAtDatabase == null){
             User user = new User();
             Date date = new Date();
             user.setEmail(userInput.getEmail());
@@ -77,21 +79,6 @@ public class CustomUserService {
     }
 
     public UserPayload getUserById(GetUserByIdInput getUserByIdInput){
-        User db_user = userRepository.findById(getUserByIdInput.getUserId()).orElse(null);
-        GetUserRolesByUserIdInput getUserRolesByUserIdInput = new GetUserRolesByUserIdInput(getUserByIdInput.getUserId());
-        List<String> db_userRoles = userRoleService.getUserRolesByUserId(getUserRolesByUserIdInput);
-        if(db_user != null){
-            UserPayload user = new UserPayload();
-            user.setId(db_user.getId());
-            user.setName(db_user.getName());
-            user.setSurname(db_user.getSurname());
-            user.setEmail(db_user.getEmail());
-            user.setPhone(db_user.getPhone());
-            user.setStatus(db_user.getStatus());
-            user.setRoles(db_userRoles);
-            return user;
-        }
-        return null;
+        return mapperService.convertToUserPayload(getUserByIdInput);
     }
-
 }

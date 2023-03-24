@@ -8,15 +8,20 @@ import com.financecrm.webportal.payload.role.DeleteRoleByNamePayload;
 import com.financecrm.webportal.payload.role.GetRoleIdByRoleNamePayload;
 import com.financecrm.webportal.services.RoleService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Instant;
+import java.util.Date;
+
 @RestController
 @RequestMapping("/role")
 @CrossOrigin
+@Slf4j
 @RequiredArgsConstructor
 public class RoleController {
 
@@ -43,6 +48,7 @@ public class RoleController {
         try {
             CreateRolePayload result = roleService.createRole(createRoleInput);
             if (result != null) {
+                log.info(createRoleInput.getRoleName() + " role created " + Date.from(Instant.now()));
                 return ResponseEntity.ok(result);
             } else {
                 throw new IllegalArgumentException("Role is already exist");
@@ -58,6 +64,7 @@ public class RoleController {
         try{
             DeleteRoleByNamePayload payload = roleService.deleteRoleByName(deleteRoleByNameInput);
             if (payload.isStatus()) {
+                log.info(deleteRoleByNameInput.getRoleName() + " role deleted " + Date.from(Instant.now()));
                 return ResponseEntity.ok(new DeleteRoleByNamePayload(true));
             } else {
                 return ResponseEntity.ok(new DeleteRoleByNamePayload(false));

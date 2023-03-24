@@ -35,20 +35,20 @@ public class UserValidationDocumentService {
     private MapperService mapperService;
 
 
-    public UserValidationDocumentPayload getUserValidationDocumentById(String userValidationDocumentId, HttpServletRequest request){
+    public UserValidationDocumentPayload getUserValidationDocumentById(String userValidationDocumentId, HttpServletRequest request) {
 
         UserValidationDocument db_document = userValidationDocumentRepository.findById(userValidationDocumentId).orElse(null);
-        if(db_document != null && !db_document.isDeleted()){
+        if (db_document != null && !db_document.isDeleted()) {
             return mapperService.convertToUserValidationDocumentPayload(db_document);
         }
         return null;
     }
 
-    public List<UserValidationDocumentPayload> getAllUserValidationDocumentByUserId(String userId, HttpServletRequest request){
+    public List<UserValidationDocumentPayload> getAllUserValidationDocumentByUserId(String userId, HttpServletRequest request) {
         String token = jwtTokenFilter.getJwtFromRequest(request);
         String userIdFromToken = tokenManager.parseUserIdFromToken(token);
 
-        if(userIdFromToken.equals(userId)){
+        if (userIdFromToken.equals(userId)) {
             List<UserValidationDocument> documentList = userValidationDocumentRepository.findAllByUserId(userId);
             return documentList.stream()
                     .map(mapperService::convertToUserValidationDocumentPayload)
@@ -59,30 +59,29 @@ public class UserValidationDocumentService {
     }
 
     @Transactional
-    public UserValidationDocumentPayload addUserValidationDocument(UserValidationDocumentInput userValidationDocumentInput, HttpServletRequest request){
-       String token = jwtTokenFilter.getJwtFromRequest(request);
-       String userIdFromToken = tokenManager.parseUserIdFromToken(token);
+    public UserValidationDocumentPayload addUserValidationDocument(UserValidationDocumentInput userValidationDocumentInput, HttpServletRequest request) {
+        String token = jwtTokenFilter.getJwtFromRequest(request);
+        String userIdFromToken = tokenManager.parseUserIdFromToken(token);
 
-       // TODO: if içerisine admin kontrolü de eklenecek. Tokendan gelen userId nin rol kontrolü yapılıp rol içerisinde admin yer alıyorsa da döküman yükleyebilir olacak. ya da bunun için @Preauthorize eklenebilir
+        // TODO: if içerisine admin kontrolü de eklenecek. Tokendan gelen userId nin rol kontrolü yapılıp rol içerisinde admin yer alıyorsa da döküman yükleyebilir olacak. ya da bunun için @Preauthorize eklenebilir
 
-       if(userIdFromToken.equals(userValidationDocumentInput.getUserId())){
-           UserValidationDocument userValidationDocument = new UserValidationDocument();
-           userValidationDocument.setUserId(userValidationDocumentInput.getUserId());
-           userValidationDocument.setUrl(userValidationDocumentInput.getUrl());
-           userValidationDocument.setType(userValidationDocumentInput.getType());
-           userValidationDocument.setStatus(UserValidationDocumentStatus.WAITING);
-           userValidationDocument.setDeleted(false);
-           Date date = new Date();
-           userValidationDocument.setCreateDate(date);
-           userValidationDocument.setUpdateDate(date);
-           userValidationDocumentRepository.save(userValidationDocument);
-           log.info("user validation document saved"+ userValidationDocument.getId());
+        if (userIdFromToken.equals(userValidationDocumentInput.getUserId())) {
+            UserValidationDocument userValidationDocument = new UserValidationDocument();
+            userValidationDocument.setUserId(userValidationDocumentInput.getUserId());
+            userValidationDocument.setUrl(userValidationDocumentInput.getUrl());
+            userValidationDocument.setType(userValidationDocumentInput.getType());
+            userValidationDocument.setStatus(UserValidationDocumentStatus.WAITING);
+            userValidationDocument.setDeleted(false);
+            Date date = new Date();
+            userValidationDocument.setCreateDate(date);
+            userValidationDocument.setUpdateDate(date);
+            userValidationDocumentRepository.save(userValidationDocument);
+            log.info("user validation document saved" + userValidationDocument.getId());
 
-           return mapperService.convertToUserValidationDocumentPayload(userValidationDocument);
+            return mapperService.convertToUserValidationDocumentPayload(userValidationDocument);
 
-       }else{
-           return null;
-       }
-
+        } else {
+            return null;
+        }
     }
 }
