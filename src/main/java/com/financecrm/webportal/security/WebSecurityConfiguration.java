@@ -2,6 +2,7 @@ package com.financecrm.webportal.security;
 
 import com.financecrm.webportal.auth.CustomUserDetailsService;
 import com.financecrm.webportal.auth.JwtTokenFilter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,16 +17,13 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class WebSecurityConfiguration {
 
-    private JwtTokenFilter jwtTokenFilter;
-    private CustomUserDetailsService customUserDetailsService;
-
     @Autowired
-    public WebSecurityConfiguration(JwtTokenFilter jwtTokenFilter, CustomUserDetailsService customUserDetailsService) {
-        this.jwtTokenFilter = jwtTokenFilter;
-        this.customUserDetailsService = customUserDetailsService;
-    }
+    private JwtTokenFilter jwtTokenFilter;
+    @Autowired
+    private CustomUserDetailsService customUserDetailsService;
 
     @Autowired
     public void configurePasswordEncoder(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception{

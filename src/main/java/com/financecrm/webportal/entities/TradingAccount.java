@@ -24,7 +24,7 @@ public class TradingAccount {
     private String apiId;
     private String walletAccountId;
     private Currency currency;
-    private int balance;
+    private double balance;
     private int leverage;
     private TradingAccountClassification classification;
     private TradingAccountType type;

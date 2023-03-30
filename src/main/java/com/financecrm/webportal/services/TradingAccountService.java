@@ -22,6 +22,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -108,10 +109,23 @@ public class TradingAccountService {
     }
 
     public Page<TradingAccountPayload> getAllTradingAccountsByUserId(GetAllTradingAccountsInput getAllTradingAccountsInput) {
-        Pageable pageable = PageRequest.of(getAllTradingAccountsInput.getPaginationInput().getPage(), getAllTradingAccountsInput.getPaginationInput().getSize(), Sort.by(Sort.Direction.valueOf(getAllTradingAccountsInput.getPaginationInput().getSortBy().toString()), getAllTradingAccountsInput.getPaginationInput().getFieldName()));
+        Pageable pageable = PageRequest.of(getAllTradingAccountsInput.getPaginationInput().getPage(),
+                 getAllTradingAccountsInput.getPaginationInput().getSize(),
+                 Sort.by(Sort.Direction.valueOf(getAllTradingAccountsInput.getPaginationInput().getSortBy().toString()),
+                 getAllTradingAccountsInput.getPaginationInput().getFieldName()));
         Page<TradingAccount> tradingAccountPage = tradingAccountRepository.findByUserIdAndIsDeletedFalse(getAllTradingAccountsInput.getUserId(),pageable);
         log.info(getAllTradingAccountsInput.getUserId()+ " trading account list prepared");
         return tradingAccountPage.map(tradingAccount -> mapperService.convertToTradingAccountPayload(tradingAccount));
 
+    }
+
+    public TradingAccount findById(String tradingAccountId) {
+        return tradingAccountRepository.findById(tradingAccountId).orElse(null);
+    }
+
+    @Async
+    @Transactional
+    public void save(TradingAccount db_tradingAccount) {
+        tradingAccountRepository.save(db_tradingAccount);
     }
 }

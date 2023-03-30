@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -36,6 +37,8 @@ public class UserValidationDocumentService {
 
 
     public UserValidationDocumentPayload getUserValidationDocumentById(String userValidationDocumentId, HttpServletRequest request) {
+        String token = jwtTokenFilter.getJwtFromRequest(request);
+        String userIdFromToken = tokenManager.parseUserIdFromToken(token);
 
         UserValidationDocument db_document = userValidationDocumentRepository.findById(userValidationDocumentId).orElse(null);
         if (db_document != null && !db_document.isDeleted()) {
@@ -54,8 +57,9 @@ public class UserValidationDocumentService {
                     .map(mapperService::convertToUserValidationDocumentPayload)
                     .collect(Collectors.toList());
 
+        }else{
+            return Collections.emptyList();
         }
-        return null;
     }
 
     @Transactional
