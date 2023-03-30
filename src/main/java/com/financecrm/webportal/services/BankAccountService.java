@@ -4,6 +4,7 @@ import com.financecrm.webportal.entities.BankAccount;
 import com.financecrm.webportal.enums.BankAccountStatus;
 import com.financecrm.webportal.input.bankaccount.CreateBankAccountInput;
 import com.financecrm.webportal.input.bankaccount.DeleteBankAccountInput;
+import com.financecrm.webportal.input.bankaccount.GetAllBankAccountsByUserId;
 import com.financecrm.webportal.input.bankaccount.GetBankAccountByIdInput;
 import com.financecrm.webportal.input.tradingaccount.GetAllTradingAccountsInput;
 import com.financecrm.webportal.payload.bankaccount.BankAccountPayload;
@@ -84,12 +85,12 @@ public class BankAccountService {
     }
     // TODO: getById' li tüm metodlarda isDeletedFalse olanlar gelecek.
 
-    public Page<BankAccountPayload> getAllBankAccountsByUserId(GetAllTradingAccountsInput getAllTradingAccountsInput) {
-        Pageable pageable = PageRequest.of(getAllTradingAccountsInput.getPaginationInput().getPage(),
-                getAllTradingAccountsInput.getPaginationInput().getSize(),
-                Sort.by(Sort.Direction.valueOf(getAllTradingAccountsInput.getPaginationInput().getSortBy().toString()),
-                getAllTradingAccountsInput.getPaginationInput().getFieldName()));
-        Page<BankAccount> bankAccountPayloadPage = bankAccountRepository.findByUserIdAndIsDeletedFalse(getAllTradingAccountsInput.getUserId(),pageable);
+    public Page<BankAccountPayload> getAllBankAccountsByUserId(GetAllBankAccountsByUserId getAllBankAccountsByUserId) {
+        Pageable pageable = PageRequest.of(getAllBankAccountsByUserId.getPaginationInput().getPage(),
+                getAllBankAccountsByUserId.getPaginationInput().getSize(),
+                Sort.by(Sort.Direction.valueOf(getAllBankAccountsByUserId.getPaginationInput().getSortBy().toString()),
+                getAllBankAccountsByUserId.getPaginationInput().getFieldName()));
+        Page<BankAccount> bankAccountPayloadPage = bankAccountRepository.findByUserIdAndIsDeletedFalse(getAllBankAccountsByUserId.getUserId(),pageable);
 
         return bankAccountPayloadPage.map(bankAccount -> mapperService.convertToBankAccountPayload(bankAccount));
     }

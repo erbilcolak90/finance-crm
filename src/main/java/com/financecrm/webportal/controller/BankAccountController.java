@@ -2,12 +2,14 @@ package com.financecrm.webportal.controller;
 
 import com.financecrm.webportal.input.bankaccount.CreateBankAccountInput;
 import com.financecrm.webportal.input.bankaccount.DeleteBankAccountInput;
+import com.financecrm.webportal.input.bankaccount.GetAllBankAccountsByUserId;
 import com.financecrm.webportal.input.bankaccount.GetBankAccountByIdInput;
 import com.financecrm.webportal.input.tradingaccount.GetAllTradingAccountsInput;
 import com.financecrm.webportal.payload.bankaccount.BankAccountPayload;
 import com.financecrm.webportal.payload.bankaccount.CreateBankAccountPayload;
 import com.financecrm.webportal.payload.bankaccount.DeleteBankAccountPayload;
 import com.financecrm.webportal.services.BankAccountService;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,9 +26,6 @@ public class BankAccountController {
 
     @Autowired
     private BankAccountService bankAccountService;
-
-    @Autowired
-    private SimpMessagingTemplate simpMessagingTemplate;
 
     @PostMapping("/createBankAccount")
     public ResponseEntity<CreateBankAccountPayload> createBankAccount(@RequestBody CreateBankAccountInput createBankAccountInput){
@@ -62,8 +61,8 @@ public class BankAccountController {
     }
 
     @GetMapping("/getAllBankAccountsByUserId")
-    public Page<BankAccountPayload> getAllBankAccountsByUserId(@RequestBody GetAllTradingAccountsInput getAllTradingAccountsInput){
-        return bankAccountService.getAllBankAccountsByUserId(getAllTradingAccountsInput);
+    public Page<BankAccountPayload> getAllBankAccountsByUserId(@RequestBody GetAllBankAccountsByUserId getAllBankAccountsByUserId){
+        return bankAccountService.getAllBankAccountsByUserId(getAllBankAccountsByUserId);
     }
 
 
