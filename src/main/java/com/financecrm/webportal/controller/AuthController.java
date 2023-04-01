@@ -2,7 +2,7 @@ package com.financecrm.webportal.controller;
 
 import com.financecrm.webportal.auth.TokenManager;
 import com.financecrm.webportal.input.login.LoginInput;
-import com.financecrm.webportal.input.user.UserInput;
+import com.financecrm.webportal.input.user.SignUpInput;
 import com.financecrm.webportal.payload.auth.LoginPayload;
 import com.financecrm.webportal.payload.auth.LogoutPayload;
 import com.financecrm.webportal.payload.auth.SignUpPayload;
@@ -12,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -82,10 +81,10 @@ public class AuthController {
     }
 
     @PostMapping("/signUp")
-    public ResponseEntity<SignUpPayload> signUp(@RequestBody UserInput userInput) throws BadCredentialsException {
+    public ResponseEntity<SignUpPayload> signUp(@RequestBody SignUpInput signUpInput) throws BadCredentialsException {
         try {
-            if (customUserService.signUp(userInput)) {
-                log.info(userInput.getEmail() + " is signed " + Date.from(Instant.now()));
+            if (customUserService.signUp(signUpInput)) {
+                log.info(signUpInput.getEmail() + " is signed " + Date.from(Instant.now()));
                 return ResponseEntity.ok(new SignUpPayload(true));
             } else {
                 throw new BadCredentialsException("This user is already exist");

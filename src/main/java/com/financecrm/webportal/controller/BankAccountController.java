@@ -2,25 +2,23 @@ package com.financecrm.webportal.controller;
 
 import com.financecrm.webportal.input.bankaccount.CreateBankAccountInput;
 import com.financecrm.webportal.input.bankaccount.DeleteBankAccountInput;
-import com.financecrm.webportal.input.bankaccount.GetAllBankAccountsByUserId;
+import com.financecrm.webportal.input.bankaccount.GetAllBankAccountsByUserIdInput;
 import com.financecrm.webportal.input.bankaccount.GetBankAccountByIdInput;
-import com.financecrm.webportal.input.tradingaccount.GetAllTradingAccountsInput;
 import com.financecrm.webportal.payload.bankaccount.BankAccountPayload;
 import com.financecrm.webportal.payload.bankaccount.CreateBankAccountPayload;
 import com.financecrm.webportal.payload.bankaccount.DeleteBankAccountPayload;
 import com.financecrm.webportal.services.BankAccountService;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/bankAccount")
 @RequiredArgsConstructor
+@CrossOrigin
 @Slf4j
 public class BankAccountController {
 
@@ -49,7 +47,7 @@ public class BankAccountController {
         }
     }
 
-    @GetMapping("/getBankAccountById")
+    @PostMapping("/getBankAccountById")
     public ResponseEntity<BankAccountPayload> getBankAccountById(@RequestBody GetBankAccountByIdInput getBankAccountByIdInput){
         BankAccountPayload result = bankAccountService.getBankAccountById(getBankAccountByIdInput);
 
@@ -60,9 +58,9 @@ public class BankAccountController {
         }
     }
 
-    @GetMapping("/getAllBankAccountsByUserId")
-    public Page<BankAccountPayload> getAllBankAccountsByUserId(@RequestBody GetAllBankAccountsByUserId getAllBankAccountsByUserId){
-        return bankAccountService.getAllBankAccountsByUserId(getAllBankAccountsByUserId);
+    @PostMapping("/getAllBankAccountsByUserId")
+    public Page<BankAccountPayload> getAllBankAccountsByUserId(@RequestBody GetAllBankAccountsByUserIdInput getAllBankAccountsByUserIdInput){
+        return bankAccountService.getAllBankAccountsByUserId(getAllBankAccountsByUserIdInput);
     }
 
 

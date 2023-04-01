@@ -2,8 +2,8 @@ package com.financecrm.webportal.controller;
 
 import com.financecrm.webportal.input.tradingaccount.CreateTradingAccountInput;
 import com.financecrm.webportal.input.tradingaccount.DeleteTradingAccountInput;
-import com.financecrm.webportal.input.tradingaccount.GetAllTradingAccountsInput;
-import com.financecrm.webportal.input.tradingaccount.GetTradingAccountInput;
+import com.financecrm.webportal.input.tradingaccount.GetAllTradingAccountsByUserIdInput;
+import com.financecrm.webportal.input.tradingaccount.GetTradingAccountByIdInput;
 import com.financecrm.webportal.payload.tradingaccount.CreateTradingAccountPayload;
 import com.financecrm.webportal.payload.tradingaccount.DeleteTradingAccountPayload;
 import com.financecrm.webportal.payload.tradingaccount.TradingAccountPayload;
@@ -30,9 +30,9 @@ public class TradingAccountController {
     @Autowired
     private TradingAccountService tradingAccountService;
 
-    @GetMapping("/getTradingAccountById")
-    public ResponseEntity<TradingAccountPayload> getTradingAccountById(@RequestBody GetTradingAccountInput getTradingAccountInput) throws BadCredentialsException {
-        TradingAccountPayload result = tradingAccountService.getTradingAccountById(getTradingAccountInput);
+    @PostMapping("/getTradingAccountById")
+    public ResponseEntity<TradingAccountPayload> getTradingAccountById(@RequestBody GetTradingAccountByIdInput getTradingAccountByIdInput) throws BadCredentialsException {
+        TradingAccountPayload result = tradingAccountService.getTradingAccountById(getTradingAccountByIdInput);
 
         if (result != null) {
             return ResponseEntity.ok(result);
@@ -42,8 +42,8 @@ public class TradingAccountController {
     }
 
     @PostMapping("/getAllTradingAccountsByUserId")
-    public ResponseEntity<Page<TradingAccountPayload>> getAllTradingAccountsByUserId(@RequestBody GetAllTradingAccountsInput getAllTradingAccountsInput) {
-        Page<TradingAccountPayload> result = tradingAccountService.getAllTradingAccountsByUserId(getAllTradingAccountsInput);
+    public ResponseEntity<Page<TradingAccountPayload>> getAllTradingAccountsByUserId(@RequestBody GetAllTradingAccountsByUserIdInput getAllTradingAccountsByUserIdInput) {
+        Page<TradingAccountPayload> result = tradingAccountService.getAllTradingAccountsByUserId(getAllTradingAccountsByUserIdInput);
         return ResponseEntity.ok(result);
     }
 

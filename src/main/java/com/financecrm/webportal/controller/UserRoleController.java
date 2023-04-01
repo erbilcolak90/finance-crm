@@ -51,7 +51,7 @@ public class UserRoleController {
         }
     }
 
-    @GetMapping("/getUserRolesByUserId")
+    @PostMapping("/getUserRolesByUserId")
     public ResponseEntity<List<String>> getUserRolesByUserId(@RequestBody GetUserRolesByUserIdInput getUserRolesByUserIdInput) throws AccountNotFoundException {
         List<String> result = userRoleService.getUserRolesByUserId(getUserRolesByUserIdInput);
         if (result != null) {

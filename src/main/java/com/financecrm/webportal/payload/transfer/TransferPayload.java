@@ -11,7 +11,7 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class GetTransferPayload {
+public class TransferPayload {
 
     private String id;
     private String fromAccountId;

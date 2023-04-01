@@ -4,9 +4,8 @@ import com.financecrm.webportal.entities.BankAccount;
 import com.financecrm.webportal.enums.BankAccountStatus;
 import com.financecrm.webportal.input.bankaccount.CreateBankAccountInput;
 import com.financecrm.webportal.input.bankaccount.DeleteBankAccountInput;
-import com.financecrm.webportal.input.bankaccount.GetAllBankAccountsByUserId;
+import com.financecrm.webportal.input.bankaccount.GetAllBankAccountsByUserIdInput;
 import com.financecrm.webportal.input.bankaccount.GetBankAccountByIdInput;
-import com.financecrm.webportal.input.tradingaccount.GetAllTradingAccountsInput;
 import com.financecrm.webportal.payload.bankaccount.BankAccountPayload;
 import com.financecrm.webportal.payload.bankaccount.CreateBankAccountPayload;
 import com.financecrm.webportal.payload.bankaccount.DeleteBankAccountPayload;
@@ -22,7 +21,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -85,12 +83,12 @@ public class BankAccountService {
     }
     // TODO: getById' li tüm metodlarda isDeletedFalse olanlar gelecek.
 
-    public Page<BankAccountPayload> getAllBankAccountsByUserId(GetAllBankAccountsByUserId getAllBankAccountsByUserId) {
-        Pageable pageable = PageRequest.of(getAllBankAccountsByUserId.getPaginationInput().getPage(),
-                getAllBankAccountsByUserId.getPaginationInput().getSize(),
-                Sort.by(Sort.Direction.valueOf(getAllBankAccountsByUserId.getPaginationInput().getSortBy().toString()),
-                getAllBankAccountsByUserId.getPaginationInput().getFieldName()));
-        Page<BankAccount> bankAccountPayloadPage = bankAccountRepository.findByUserIdAndIsDeletedFalse(getAllBankAccountsByUserId.getUserId(),pageable);
+    public Page<BankAccountPayload> getAllBankAccountsByUserId(GetAllBankAccountsByUserIdInput getAllBankAccountsByUserIdInput) {
+        Pageable pageable = PageRequest.of(getAllBankAccountsByUserIdInput.getPaginationInput().getPage(),
+                getAllBankAccountsByUserIdInput.getPaginationInput().getSize(),
+                Sort.by(Sort.Direction.valueOf(getAllBankAccountsByUserIdInput.getPaginationInput().getSortBy().toString()),
+                getAllBankAccountsByUserIdInput.getPaginationInput().getFieldName()));
+        Page<BankAccount> bankAccountPayloadPage = bankAccountRepository.findByUserIdAndIsDeletedFalse(getAllBankAccountsByUserIdInput.getUserId(),pageable);
 
         return bankAccountPayloadPage.map(bankAccount -> mapperService.convertToBankAccountPayload(bankAccount));
     }

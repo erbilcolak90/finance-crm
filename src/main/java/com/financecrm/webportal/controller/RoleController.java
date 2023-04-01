@@ -28,7 +28,7 @@ public class RoleController {
     @Autowired
     private RoleService roleService;
 
-    @GetMapping("/getRoleIdByRoleName")
+    @PostMapping("/getRoleIdByRoleName")
     public ResponseEntity<GetRoleIdByRoleNamePayload> getRoleIdByRoleName(@RequestBody GetRoleIdByRoleNameInput getRoleIdByRoleNameInput) {
         try {
             GetRoleIdByRoleNamePayload result = roleService.getRoleIdByRoleName(getRoleIdByRoleNameInput);

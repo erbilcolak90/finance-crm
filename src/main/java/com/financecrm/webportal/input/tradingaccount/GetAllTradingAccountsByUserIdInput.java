@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class GetAllTradingAccountsInput {
+public class GetAllTradingAccountsByUserIdInput {
 
     private String userId;
     private PaginationInput paginationInput;

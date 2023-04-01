@@ -1,7 +1,6 @@
 package com.financecrm.webportal.services;
 
 import com.financecrm.webportal.entities.*;
-import com.financecrm.webportal.input.bankaccount.GetBankAccountByIdInput;
 import com.financecrm.webportal.input.user.GetUserByIdInput;
 import com.financecrm.webportal.input.userrole.GetUserRolesByUserIdInput;
 import com.financecrm.webportal.payload.bankaccount.BankAccountPayload;
@@ -9,7 +8,7 @@ import com.financecrm.webportal.payload.bankaccount.CreateBankAccountPayload;
 import com.financecrm.webportal.payload.tradingaccount.CreateTradingAccountPayload;
 import com.financecrm.webportal.payload.tradingaccount.TradingAccountPayload;
 import com.financecrm.webportal.payload.transfer.CreateTransferPayload;
-import com.financecrm.webportal.payload.transfer.GetTransferPayload;
+import com.financecrm.webportal.payload.transfer.TransferPayload;
 import com.financecrm.webportal.payload.user.UserPayload;
 import com.financecrm.webportal.payload.uservalidationdocument.UserValidationDocumentPayload;
 import com.financecrm.webportal.payload.walletaccount.WalletAccountPayload;
@@ -72,8 +71,8 @@ public class MapperService {
         return modelMapper.map(walletAccount,WalletAccountPayload.class);
     }
 
-    public GetTransferPayload convertToGetTransferPayload(Transfer transfer) {
-        return modelMapper.map(transfer,GetTransferPayload.class);
+    public TransferPayload convertToGetTransferPayload(Transfer transfer) {
+        return modelMapper.map(transfer, TransferPayload.class);
     }
 
     public CreateTransferPayload convertToCreateTransferPayload(Transfer transfer) {

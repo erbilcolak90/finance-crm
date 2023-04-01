@@ -9,5 +9,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class GetRoleIdByRoleNamePayload {
 
-    private String message;
+    private String roleName;
 }

@@ -6,7 +6,7 @@ import com.financecrm.webportal.input.transfer.GetAllTransfersByUserIdInput;
 import com.financecrm.webportal.input.transfer.GetTransferByIdInput;
 import com.financecrm.webportal.payload.transfer.CreateTransferPayload;
 import com.financecrm.webportal.payload.transfer.DeleteTransferPayload;
-import com.financecrm.webportal.payload.transfer.GetTransferPayload;
+import com.financecrm.webportal.payload.transfer.TransferPayload;
 import com.financecrm.webportal.services.TransferService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,16 +16,17 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/transfer")
+@CrossOrigin
 @RequiredArgsConstructor
 public class TransferController {
 
     @Autowired
     private TransferService transferService;
 
-    @GetMapping("/getTransferById")
-    public ResponseEntity<GetTransferPayload> getTransferById(@RequestBody GetTransferByIdInput getTransferByIdInput){
+    @PostMapping("/getTransferById")
+    public ResponseEntity<TransferPayload> getTransferById(@RequestBody GetTransferByIdInput getTransferByIdInput){
 
-        GetTransferPayload result = transferService.getTransferById(getTransferByIdInput);
+        TransferPayload result = transferService.getTransferById(getTransferByIdInput);
 
         if (result != null) {
             return ResponseEntity.ok(result);
@@ -34,8 +35,8 @@ public class TransferController {
         }
     }
 
-    @GetMapping("/getAllTransfersByUserId")
-    public Page<GetTransferPayload> getAllTransfersByUserId(@RequestBody GetAllTransfersByUserIdInput getAllTransfersByUserIdInput){
+    @PostMapping("/getAllTransfersByUserId")
+    public Page<TransferPayload> getAllTransfersByUserId(@RequestBody GetAllTransfersByUserIdInput getAllTransfersByUserIdInput){
         return transferService.getAllTransfersByUserId(getAllTransfersByUserIdInput);
     }
 

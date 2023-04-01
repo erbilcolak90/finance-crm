@@ -10,7 +10,7 @@ import com.financecrm.webportal.input.transfer.GetAllTransfersByUserIdInput;
 import com.financecrm.webportal.input.transfer.GetTransferByIdInput;
 import com.financecrm.webportal.payload.transfer.CreateTransferPayload;
 import com.financecrm.webportal.payload.transfer.DeleteTransferPayload;
-import com.financecrm.webportal.payload.transfer.GetTransferPayload;
+import com.financecrm.webportal.payload.transfer.TransferPayload;
 import com.financecrm.webportal.repositories.TransferRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +42,7 @@ public class TransferService {
     private TradingAccountService tradingAccountService;
 
 
-    public GetTransferPayload getTransferById(GetTransferByIdInput getTransferByIdInput) {
+    public TransferPayload getTransferById(GetTransferByIdInput getTransferByIdInput) {
         Transfer db_transfer = transferRepository.findById(getTransferByIdInput.getId()).orElse(null);
 
         if (db_transfer != null && !db_transfer.isDeleted()) {
@@ -52,7 +52,7 @@ public class TransferService {
         }
     }
 
-    public Page<GetTransferPayload> getAllTransfersByUserId(GetAllTransfersByUserIdInput getAllTransfersByUserIdInput) {
+    public Page<TransferPayload> getAllTransfersByUserId(GetAllTransfersByUserIdInput getAllTransfersByUserIdInput) {
         Pageable pageable = PageRequest.of(getAllTransfersByUserIdInput.getPaginationInput().getPage(),
                 getAllTransfersByUserIdInput.getPaginationInput().getSize(),
                 Sort.by(Sort.Direction.valueOf(getAllTransfersByUserIdInput.getPaginationInput().getSortBy().toString()),

@@ -1,6 +1,8 @@
 package com.financecrm.webportal.controller;
 
-import com.financecrm.webportal.input.uservalidationdocument.UserValidationDocumentInput;
+import com.financecrm.webportal.input.uservalidationdocument.GetAllUserValidationDocumentByUserIdInput;
+import com.financecrm.webportal.input.uservalidationdocument.GetUserValidationDocumentByIdInput;
+import com.financecrm.webportal.input.uservalidationdocument.AddUserValidationDocumentInput;
 import com.financecrm.webportal.payload.uservalidationdocument.UserValidationDocumentPayload;
 import com.financecrm.webportal.services.UserValidationDocumentService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,9 +27,9 @@ public class UserValidationDocumentController {
     @Autowired
     private UserValidationDocumentService userValidationDocumentService;
 
-    @GetMapping("/getUserValidationDocumentById")
-    public ResponseEntity<UserValidationDocumentPayload> getUserValidationDocumentById(@RequestParam String userValidationDocumentId, HttpServletRequest request) {
-        UserValidationDocumentPayload result = userValidationDocumentService.getUserValidationDocumentById(userValidationDocumentId, request);
+    @PostMapping("/getUserValidationDocumentById")
+    public ResponseEntity<UserValidationDocumentPayload> getUserValidationDocumentById(@RequestBody GetUserValidationDocumentByIdInput getUserValidationDocumentByIdInput, HttpServletRequest request) {
+        UserValidationDocumentPayload result = userValidationDocumentService.getUserValidationDocumentById(getUserValidationDocumentByIdInput, request);
         if (result != null) {
             return ResponseEntity.ok(result);
         } else {
@@ -36,8 +38,8 @@ public class UserValidationDocumentController {
     }
 
     @PostMapping("/getAllUserValidationDocumentByUserId")
-    public ResponseEntity<List<UserValidationDocumentPayload>> getAllUserValidationDocumentByUserId(@RequestParam String userId, HttpServletRequest request) {
-        List<UserValidationDocumentPayload> result = userValidationDocumentService.getAllUserValidationDocumentByUserId(userId, request);
+    public ResponseEntity<List<UserValidationDocumentPayload>> getAllUserValidationDocumentByUserId(@RequestBody GetAllUserValidationDocumentByUserIdInput getAllUserValidationDocumentByUserIdInput, HttpServletRequest request) {
+        List<UserValidationDocumentPayload> result = userValidationDocumentService.getAllUserValidationDocumentByUserId(getAllUserValidationDocumentByUserIdInput, request);
         if (result != null) {
             return ResponseEntity.ok(result);
         } else {
@@ -46,10 +48,10 @@ public class UserValidationDocumentController {
     }
 
     @PostMapping("/addUserValidationDocument")
-    public ResponseEntity<UserValidationDocumentPayload> addUserValidationDocument(@RequestBody UserValidationDocumentInput userValidationDocumentInput, HttpServletRequest request) {
-        UserValidationDocumentPayload result = userValidationDocumentService.addUserValidationDocument(userValidationDocumentInput, request);
+    public ResponseEntity<UserValidationDocumentPayload> addUserValidationDocument(@RequestBody AddUserValidationDocumentInput addUserValidationDocumentInput, HttpServletRequest request) {
+        UserValidationDocumentPayload result = userValidationDocumentService.addUserValidationDocument(addUserValidationDocumentInput, request);
         if (result != null) {
-            log.info(userValidationDocumentInput.getUserId() + " is added " + userValidationDocumentInput.getType() + " document " + Date.from(Instant.now()));
+            log.info(addUserValidationDocumentInput.getUserId() + " is added " + addUserValidationDocumentInput.getType() + " document " + Date.from(Instant.now()));
             return ResponseEntity.ok(result);
         } else {
             throw new UsernameNotFoundException("User not found");

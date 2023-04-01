@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class GetTradingAccountInput {
+public class GetTradingAccountByIdInput {
 
     private String id;
 
