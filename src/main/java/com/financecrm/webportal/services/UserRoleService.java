@@ -54,14 +54,14 @@ public class UserRoleService {
         User user = customUserService.findByUserId(addRoleToUserInput.getUserId());
         GetRoleIdByRoleNameInput getRoleIdByRoleNameInput = new GetRoleIdByRoleNameInput(addRoleToUserInput.getRoleName());
         GetRoleIdByRoleNamePayload roleIdPayload = roleService.getRoleIdByRoleName(getRoleIdByRoleNameInput);
-        List<UserRole> userRoles = userRoleRepository.findByUserIdAndRoleId(addRoleToUserInput.getUserId(), roleIdPayload.getMessage());
-        if (user != null && roleIdPayload.getMessage() != null) {
-            if (userRoles.stream().anyMatch(userRole -> userRole.getRoleId().equals(roleIdPayload.getMessage()))) {
+        List<UserRole> userRoles = userRoleRepository.findByUserIdAndRoleId(addRoleToUserInput.getUserId(), roleIdPayload.getRoleName());
+        if (user != null && roleIdPayload.getRoleName() != null) {
+            if (userRoles.stream().anyMatch(userRole -> userRole.getRoleId().equals(roleIdPayload.getRoleName()))) {
                 return new AddRoleToUserPayload("User is already has this role");
             }
             UserRole userRole = new UserRole();
             userRole.setUserId(user.getId());
-            userRole.setRoleId(roleIdPayload.getMessage());
+            userRole.setRoleId(roleIdPayload.getRoleName());
             userRoleRepository.save(userRole);
             log.info(userRole.getRoleId() + " role is added to user " + userRole.getUserId());
             return new AddRoleToUserPayload(addRoleToUserInput.getRoleName() + " added to " + addRoleToUserInput.getUserId());
@@ -76,8 +76,8 @@ public class UserRoleService {
         GetRoleIdByRoleNameInput getRoleIdByRoleNameInput = new GetRoleIdByRoleNameInput(deleteRoleFromUserInput.getRoleName());
         GetRoleIdByRoleNamePayload roleIdPayload = roleService.getRoleIdByRoleName(getRoleIdByRoleNameInput);
         List<UserRole> userRoles = userRoleRepository.findByUserIdAndRoleId(deleteRoleFromUserInput.getUserId(), deleteRoleFromUserInput.getRoleName());
-        if (user != null && roleIdPayload.getMessage() != null) {
-            userRoles.stream().filter(userRole -> userRole.getRoleId().equals(roleIdPayload.getMessage()))
+        if (user != null && roleIdPayload.getRoleName() != null) {
+            userRoles.stream().filter(userRole -> userRole.getRoleId().equals(roleIdPayload.getRoleName()))
                     .forEach(userRole -> {
                         userRole.setDeleted(true);
                         userRoleRepository.save(userRole);

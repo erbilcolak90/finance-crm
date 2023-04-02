@@ -3,7 +3,6 @@ package com.financecrm.webportal.controller;
 import com.financecrm.webportal.input.userrole.AddRoleToUserInput;
 import com.financecrm.webportal.input.userrole.DeleteRoleFromUserInput;
 import com.financecrm.webportal.input.userrole.GetUserRolesByUserIdInput;
-import com.financecrm.webportal.payload.role.DeleteRoleByNamePayload;
 import com.financecrm.webportal.payload.userrole.AddRoleToUserPayload;
 import com.financecrm.webportal.payload.userrole.DeleteRoleFromUserPayload;
 import com.financecrm.webportal.services.UserRoleService;
