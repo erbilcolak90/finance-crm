@@ -3,8 +3,9 @@ package com.financecrm.webportal.services;
 import com.financecrm.webportal.entities.User;
 import com.financecrm.webportal.enums.Role;
 import com.financecrm.webportal.enums.UserStatus;
-import com.financecrm.webportal.input.role.AddRoleToUserInput;
-import com.financecrm.webportal.input.user.UserInput;
+import com.financecrm.webportal.input.userrole.AddRoleToUserInput;
+import com.financecrm.webportal.input.user.GetUserByIdInput;
+import com.financecrm.webportal.input.user.SignUpInput;
 import com.financecrm.webportal.payload.user.UserPayload;
 import com.financecrm.webportal.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -30,6 +30,8 @@ public class CustomUserService {
     private BCryptPasswordEncoder bCryptPasswordEncoder;
     @Autowired
     private WalletAccountService walletAccountService;
+    @Autowired
+    private MapperService mapperService;
 
     public User findByName(String username) {
         return userRepository.findByName(username);
@@ -44,16 +46,16 @@ public class CustomUserService {
     }
 
     @Transactional
-    public boolean signUp(UserInput userInput){
-        User db_user = userRepository.findByEmail(userInput.getEmail());
-        if(db_user == null){
+    public boolean signUp(SignUpInput signUpInput){
+        User userAtDatabase = userRepository.findByEmail(signUpInput.getEmail());
+        if(userAtDatabase == null){
             User user = new User();
             Date date = new Date();
-            user.setEmail(userInput.getEmail());
-            user.setPassword(bCryptPasswordEncoder.encode(userInput.getPassword()));
-            user.setName(userInput.getName());
-            user.setSurname(userInput.getSurname());
-            user.setPhone(userInput.getPhone());
+            user.setEmail(signUpInput.getEmail());
+            user.setPassword(bCryptPasswordEncoder.encode(signUpInput.getPassword()));
+            user.setName(signUpInput.getName());
+            user.setSurname(signUpInput.getSurname());
+            user.setPhone(signUpInput.getPhone());
             user.setStatus(UserStatus.WAITING);
             user.setRepresentativeEmployeeId(null);
             user.setDeleted(false);
@@ -74,21 +76,7 @@ public class CustomUserService {
         }
     }
 
-    public UserPayload getUserById(String id){
-        User db_user = userRepository.findById(id).orElse(null);
-        List<String> db_userRoles = userRoleService.getUserRolesByUserId(id);
-        if(db_user != null){
-            UserPayload user = new UserPayload();
-            user.setId(db_user.getId());
-            user.setName(db_user.getName());
-            user.setSurname(db_user.getSurname());
-            user.setEmail(db_user.getEmail());
-            user.setPhone(db_user.getPhone());
-            user.setStatus(db_user.getStatus());
-            user.setRoles(db_userRoles);
-            return user;
-        }
-        return null;
+    public UserPayload getUserById(GetUserByIdInput getUserByIdInput){
+        return mapperService.convertToUserPayload(getUserByIdInput);
     }
-
 }

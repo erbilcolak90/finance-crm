@@ -2,12 +2,13 @@ package com.financecrm.webportal.controller;
 
 import com.financecrm.webportal.auth.TokenManager;
 import com.financecrm.webportal.input.login.LoginInput;
-import com.financecrm.webportal.input.user.UserInput;
+import com.financecrm.webportal.input.user.SignUpInput;
 import com.financecrm.webportal.payload.auth.LoginPayload;
 import com.financecrm.webportal.payload.auth.LogoutPayload;
 import com.financecrm.webportal.payload.auth.SignUpPayload;
 import com.financecrm.webportal.services.CustomUserService;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,10 +20,14 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Instant;
+import java.util.Date;
+
 @Slf4j
 @RestController
 @RequestMapping("/auth")
 @CrossOrigin
+@RequiredArgsConstructor
 public class AuthController {
 
     @Autowired
@@ -45,7 +50,7 @@ public class AuthController {
                 String token = tokenManager.generateToken(loginInput.getEmail());
                 String userId = tokenManager.parseUserIdFromToken(token);
                 LoginPayload loginPayload = new LoginPayload(token, userId);
-
+                log.info(loginInput.getEmail() + " login at " + Date.from(Instant.now()));
                 return ResponseEntity.ok(loginPayload);
             }
         } catch (AuthenticationException e) {
@@ -60,9 +65,12 @@ public class AuthController {
             String header = request.getHeader("Authorization");
             String token = header.substring(7);
             if (tokenManager.tokenValidate(token)) {
+                String userId = tokenManager.parseUserIdFromToken(token);
                 tokenManager.logout(token);
+                log.info(userId + " logout at " + Date.from(Instant.now()));
                 return ResponseEntity.ok(new LogoutPayload(true));
-            }else{
+            } else {
+                log.info("token invalid");
                 return ResponseEntity.ok(new LogoutPayload(false));
             }
 
@@ -73,9 +81,10 @@ public class AuthController {
     }
 
     @PostMapping("/signUp")
-    public ResponseEntity<SignUpPayload> signUp(@RequestBody UserInput userInput) throws BadCredentialsException {
+    public ResponseEntity<SignUpPayload> signUp(@RequestBody SignUpInput signUpInput) throws BadCredentialsException {
         try {
-            if (customUserService.signUp(userInput)) {
+            if (customUserService.signUp(signUpInput)) {
+                log.info(signUpInput.getEmail() + " is signed " + Date.from(Instant.now()));
                 return ResponseEntity.ok(new SignUpPayload(true));
             } else {
                 throw new BadCredentialsException("This user is already exist");

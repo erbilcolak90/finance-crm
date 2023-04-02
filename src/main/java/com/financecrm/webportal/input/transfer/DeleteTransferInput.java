@@ -1,14 +1,13 @@
-package com.financecrm.webportal.input.tradingaccount;
+package com.financecrm.webportal.input.transfer;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
-public class GetTradingAccountInput {
+public class DeleteTransferInput {
 
     private String id;
-
 }

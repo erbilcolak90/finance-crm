@@ -8,6 +8,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -23,4 +25,5 @@ public class TradingAccountPayload {
     private TradingAccountClassification classification;
     private TradingAccountType type;
     private TradingAccountStatus status;
+    private Date createDate;
 }

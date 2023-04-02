@@ -8,6 +8,6 @@ import org.springframework.data.mongodb.repository.Query;
 
 public interface TradingAccountRepository extends MongoRepository<TradingAccount,String> {
 
-    @Query(value = "{'userId': ?0 }")
-    Page<TradingAccount> getAllTradingAccountsByUserId(String userId,Pageable pageable);
+    @Query(value = "{'userId': ?0 , 'isDeleted': false }")
+    Page<TradingAccount> findByUserIdAndIsDeletedFalse(String userId,Pageable pageable);
 }

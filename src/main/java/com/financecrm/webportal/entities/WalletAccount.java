@@ -1,7 +1,6 @@
 package com.financecrm.webportal.entities;
 
 import com.financecrm.webportal.enums.Currency;
-import com.financecrm.webportal.enums.TradingAccountStatus;
 import com.financecrm.webportal.enums.WalletAccountStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -21,7 +20,7 @@ public class WalletAccount {
     private String id;
     private String userId;
     private Currency currency;
-    private int balance;
+    private double balance;
     private WalletAccountStatus status;
     private boolean isDeleted;
     private Date createDate;

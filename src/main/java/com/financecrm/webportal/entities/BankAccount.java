@@ -1,6 +1,7 @@
 package com.financecrm.webportal.entities;
 
 import com.financecrm.webportal.enums.BankAccountStatus;
+import com.financecrm.webportal.enums.BankName;
 import com.financecrm.webportal.enums.Currency;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,10 +21,10 @@ public class BankAccount {
     private String id;
     private String userId;
     private String alias;
+    private BankName bankName;
     private String iban;
-    private String swiftCode;
-    private String bankName;
     private Currency currency;
+    private String swiftCode;
     private BankAccountStatus status;
     private boolean isDeleted;
     private Date createDate;

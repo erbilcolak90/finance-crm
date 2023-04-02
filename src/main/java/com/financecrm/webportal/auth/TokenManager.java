@@ -24,16 +24,13 @@ public class TokenManager {
     @Autowired
     private CustomUserService customUserService;
 
-
-    private static final int validity = 30 * 60 * 1000;
+    private static final int validity = 30 * 60 * 10000;
     Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
     public String generateToken(String email) {
-        UserDetails userDetails = customUserDetailsService.loadUserByUsername(email);
         User user = customUserService.findByEmail(email);
         Map<String, Object> claims = new HashMap<>();
         claims.put("userId", user.getId());
-        // claims.put("roles",userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()));
 
         return Jwts.builder()
                 .setClaims(claims)
@@ -52,7 +49,7 @@ public class TokenManager {
         return true;
     }
 
-    public void expireToken(String token){
+    public void expireToken(String token) {
         Claims claims = Jwts.parser().setSigningKey(key).parseClaimsJws(token).getBody();
 
         int tokenDate = (int) claims.get("exp");
@@ -63,29 +60,16 @@ public class TokenManager {
     public boolean tokenValidate(String token) {
         if (parseUserIdFromToken(token) != null && isExpired(token)) {
             return true;
+        } else {
+            return false;
         }
-        return false;
-    }
-
-   /* public String getUsernameFromToken(String token) {
-        Claims claims = getClaims(token);
-
-        String userId = (String) claims.get("userId");
-
-        User user = customUserService.findByUserId(userId).getData();
-
-        return user.getUsername();
 
     }
-*/
+
     public String parseUserIdFromToken(String token) {
         try {
             Claims body = Jwts.parser().setSigningKey(key).parseClaimsJws(token).getBody();
-
-            String userId = (String) body.get("userId");
-
-            return userId;
-
+            return (String) body.get("userId");
         } catch (Exception e) {
             e.printStackTrace();
         }

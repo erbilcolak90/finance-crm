@@ -4,6 +4,7 @@ import com.financecrm.webportal.entities.User;
 import com.financecrm.webportal.entities.UserRole;
 import com.financecrm.webportal.repositories.RoleRepository;
 import com.financecrm.webportal.repositories.UserRoleRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+@RequiredArgsConstructor
 public class SecurityUser implements UserDetails {
 
     private User user;

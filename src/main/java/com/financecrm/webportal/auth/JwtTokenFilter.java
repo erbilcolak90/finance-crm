@@ -5,7 +5,6 @@ import com.financecrm.webportal.services.CustomUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -30,19 +29,13 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     private CustomUserDetailsService customUserDetailsService;
     @Autowired
     private CustomUserService customUserService;
-
     @Autowired
     private AuthenticationManager authenticationManager;
 
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        final String authHeader = request.getHeader("Authorization");
-        String token = null;
         String userId = null;
-
-      /*  if (authHeader != null && authHeader.contains("Bearer")) {
-            token = authHeader.substring(7);*/
             try {
 
                 String jwt = getJwtFromRequest(request);
@@ -61,22 +54,9 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
                 }
 
-                /*userId = tokenManager.parseUserIdFromToken(token);
-                User user = customUserService.findByUserId(userId).getData();
-                UserDetails userDetails = customUserDetailsService.loadUserByUsername(user.getEmail());
-
-                if (tokenManager.tokenValidate(token)) {
-                    UsernamePasswordAuthenticationToken upassToken =
-                            new UsernamePasswordAuthenticationToken(userId, token, userDetails.getAuthorities());
-                    upassToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                    SecurityContextHolder.getContext().setAuthentication(upassToken);
-
-                }
-*/
             } catch (Exception e) {
                 e.printStackTrace();
             }
-      //  }
 
         filterChain.doFilter(request, response);
     }

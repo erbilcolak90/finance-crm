@@ -1,4 +1,4 @@
-package com.financecrm.webportal.input.role;
+package com.financecrm.webportal.input.walletaccount;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,8 +7,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class DeleteRoleFromUserInput {
+public class GetWalletAccountByUserIdInput {
 
     private String userId;
-    private String roleName;
+    
 }

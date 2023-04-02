@@ -9,8 +9,8 @@ import com.financecrm.webportal.enums.UserStatus;
 import com.financecrm.webportal.enums.WalletAccountStatus;
 import com.financecrm.webportal.input.tradingaccount.CreateTradingAccountInput;
 import com.financecrm.webportal.input.tradingaccount.DeleteTradingAccountInput;
-import com.financecrm.webportal.input.tradingaccount.GetAllTradingAccountsInput;
-import com.financecrm.webportal.input.tradingaccount.GetTradingAccountInput;
+import com.financecrm.webportal.input.tradingaccount.GetAllTradingAccountsByUserIdInput;
+import com.financecrm.webportal.input.tradingaccount.GetTradingAccountByIdInput;
 import com.financecrm.webportal.payload.tradingaccount.CreateTradingAccountPayload;
 import com.financecrm.webportal.payload.tradingaccount.DeleteTradingAccountPayload;
 import com.financecrm.webportal.payload.tradingaccount.TradingAccountPayload;
@@ -22,6 +22,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -98,20 +99,33 @@ public class TradingAccountService {
 
     }
 
-    public TradingAccountPayload getTradingAccountById(GetTradingAccountInput getTradingAccountInput) {
+    public TradingAccountPayload getTradingAccountById(GetTradingAccountByIdInput getTradingAccountByIdInput) {
         TradingAccountPayload payload = null;
-        Optional<TradingAccount> db_tradingAccount = tradingAccountRepository.findById(getTradingAccountInput.getId());
+        Optional<TradingAccount> db_tradingAccount = tradingAccountRepository.findById(getTradingAccountByIdInput.getId());
         if (db_tradingAccount.isPresent()) {
             payload = mapperService.convertToTradingAccountPayload(db_tradingAccount.get());
         }
         return payload;
     }
 
-    public Page<TradingAccountPayload> getAllTradingAccountsByUserId(GetAllTradingAccountsInput getAllTradingAccountsInput) {
-        Pageable pageable = PageRequest.of(getAllTradingAccountsInput.getPage(), getAllTradingAccountsInput.getSize(), Sort.by(Sort.Direction.valueOf(getAllTradingAccountsInput.getSortBy().toString()), getAllTradingAccountsInput.getFieldName()));
-        Page<TradingAccount> tradingAccountPage = tradingAccountRepository.getAllTradingAccountsByUserId(getAllTradingAccountsInput.getUserId(),pageable);
-        log.info(getAllTradingAccountsInput.getUserId()+ " trading account list prepared");
+    public Page<TradingAccountPayload> getAllTradingAccountsByUserId(GetAllTradingAccountsByUserIdInput getAllTradingAccountsByUserIdInput) {
+        Pageable pageable = PageRequest.of(getAllTradingAccountsByUserIdInput.getPaginationInput().getPage(),
+                 getAllTradingAccountsByUserIdInput.getPaginationInput().getSize(),
+                 Sort.by(Sort.Direction.valueOf(getAllTradingAccountsByUserIdInput.getPaginationInput().getSortBy().toString()),
+                 getAllTradingAccountsByUserIdInput.getPaginationInput().getFieldName()));
+        Page<TradingAccount> tradingAccountPage = tradingAccountRepository.findByUserIdAndIsDeletedFalse(getAllTradingAccountsByUserIdInput.getUserId(),pageable);
+        log.info(getAllTradingAccountsByUserIdInput.getUserId()+ " trading account list prepared");
         return tradingAccountPage.map(tradingAccount -> mapperService.convertToTradingAccountPayload(tradingAccount));
 
+    }
+
+    public TradingAccount findById(String tradingAccountId) {
+        return tradingAccountRepository.findById(tradingAccountId).orElse(null);
+    }
+
+    @Async
+    @Transactional
+    public void save(TradingAccount db_tradingAccount) {
+        tradingAccountRepository.save(db_tradingAccount);
     }
 }

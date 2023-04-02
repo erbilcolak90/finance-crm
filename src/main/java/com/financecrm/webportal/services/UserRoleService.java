@@ -2,8 +2,14 @@ package com.financecrm.webportal.services;
 
 import com.financecrm.webportal.entities.User;
 import com.financecrm.webportal.entities.UserRole;
-import com.financecrm.webportal.input.role.AddRoleToUserInput;
-import com.financecrm.webportal.input.role.DeleteRoleFromUserInput;
+import com.financecrm.webportal.input.userrole.AddRoleToUserInput;
+import com.financecrm.webportal.input.userrole.DeleteRoleFromUserInput;
+import com.financecrm.webportal.input.role.GetRoleIdByRoleNameInput;
+import com.financecrm.webportal.input.userrole.GetUserRolesByUserIdInput;
+import com.financecrm.webportal.payload.role.DeleteRoleByNamePayload;
+import com.financecrm.webportal.payload.role.GetRoleIdByRoleNamePayload;
+import com.financecrm.webportal.payload.userrole.AddRoleToUserPayload;
+import com.financecrm.webportal.payload.userrole.DeleteRoleFromUserPayload;
 import com.financecrm.webportal.repositories.UserRoleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -26,10 +33,10 @@ public class UserRoleService {
     @Autowired
     private CustomUserService customUserService;
 
-    public List<String> getUserRolesByUserId(String userId) {
-        User user = customUserService.findByUserId(userId);
+    public List<String> getUserRolesByUserId(GetUserRolesByUserIdInput getUserRolesByUserIdInput) {
+        User user = customUserService.findByUserId(getUserRolesByUserIdInput.getUserId());
         if (user != null) {
-            List<UserRole> roleList = userRoleRepository.getUserRolesByUserId(userId);
+            List<UserRole> roleList = userRoleRepository.getUserRolesByUserId(getUserRolesByUserIdInput.getUserId());
             List<String> roleNameList = new ArrayList<>();
 
             for (UserRole role : roleList) {
@@ -38,46 +45,49 @@ public class UserRoleService {
             }
             return roleNameList;
         } else {
-            return null;
+            return Collections.emptyList();
         }
     }
 
     @Transactional
-    public String addRoleToUser(AddRoleToUserInput addRoleToUserInput) {
+    public AddRoleToUserPayload addRoleToUser(AddRoleToUserInput addRoleToUserInput) {
         User user = customUserService.findByUserId(addRoleToUserInput.getUserId());
-        String roleId = roleService.getRoleIdByRoleName(addRoleToUserInput.getRoleName());
-        List<UserRole> userRoles = userRoleRepository.findByUserIdAndRoleId(addRoleToUserInput.getUserId(), roleId);
-        if (user != null && roleId != null) {
-            if (userRoles.stream().anyMatch(userRole -> userRole.getRoleId().equals(roleId))) {
-                return "User is already has this role";
+        GetRoleIdByRoleNameInput getRoleIdByRoleNameInput = new GetRoleIdByRoleNameInput(addRoleToUserInput.getRoleName());
+        GetRoleIdByRoleNamePayload roleIdPayload = roleService.getRoleIdByRoleName(getRoleIdByRoleNameInput);
+        List<UserRole> userRoles = userRoleRepository.findByUserIdAndRoleId(addRoleToUserInput.getUserId(), roleIdPayload.getRoleName());
+        if (user != null && roleIdPayload.getRoleName() != null) {
+            if (userRoles.stream().anyMatch(userRole -> userRole.getRoleId().equals(roleIdPayload.getRoleName()))) {
+                return new AddRoleToUserPayload("User is already has this role");
             }
             UserRole userRole = new UserRole();
             userRole.setUserId(user.getId());
-            userRole.setRoleId(roleId);
+            userRole.setRoleId(roleIdPayload.getRoleName());
             userRoleRepository.save(userRole);
             log.info(userRole.getRoleId() + " role is added to user " + userRole.getUserId());
-            return addRoleToUserInput.getRoleName() + " added to " + addRoleToUserInput.getUserId();
+            return new AddRoleToUserPayload(addRoleToUserInput.getRoleName() + " added to " + addRoleToUserInput.getUserId());
         } else {
-            return "User or rolename not found";
+            return new AddRoleToUserPayload("User or rolename not found");
         }
     }
 
     @Transactional
-    public String deleteRoleFromUser(DeleteRoleFromUserInput deleteRoleFromUserInput) {
+    public DeleteRoleFromUserPayload deleteRoleFromUser(DeleteRoleFromUserInput deleteRoleFromUserInput) {
         User user = customUserService.findByUserId(deleteRoleFromUserInput.getUserId());
-        String roleId = roleService.getRoleIdByRoleName(deleteRoleFromUserInput.getRoleName());
+        GetRoleIdByRoleNameInput getRoleIdByRoleNameInput = new GetRoleIdByRoleNameInput(deleteRoleFromUserInput.getRoleName());
+        GetRoleIdByRoleNamePayload roleIdPayload = roleService.getRoleIdByRoleName(getRoleIdByRoleNameInput);
         List<UserRole> userRoles = userRoleRepository.findByUserIdAndRoleId(deleteRoleFromUserInput.getUserId(), deleteRoleFromUserInput.getRoleName());
-        if (user != null && roleId != null) {
-            userRoles.stream().filter(userRole -> userRole.getRoleId().equals(roleId))
+        if (user != null && roleIdPayload.getRoleName() != null) {
+            userRoles.stream().filter(userRole -> userRole.getRoleId().equals(roleIdPayload.getRoleName()))
                     .forEach(userRole -> {
                         userRole.setDeleted(true);
                         userRoleRepository.save(userRole);
-                        log.info(userRole.getRoleId() + " deleted from "+ userRole.getUserId());
+                        log.info(userRole.getRoleId() + " deleted from " + userRole.getUserId());
                     });
 
-            return "Role deleted from user";
+            return new DeleteRoleFromUserPayload(true);
         } else {
-            return "User or rolename not found";
+            log.info("user or role not found");
+            return new DeleteRoleFromUserPayload(false);
         }
     }
 }

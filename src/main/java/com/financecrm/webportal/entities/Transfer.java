@@ -20,7 +20,7 @@ public class Transfer {
     private String id;
     private String fromAccountId;
     private String toAccountId;
-    private int amount;
+    private double amount;
     private TransferStatus status;
     private TransferType type;
     private boolean isDeleted;

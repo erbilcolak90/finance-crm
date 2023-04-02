@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class UserInput {
+public class SignUpInput {
 
     private String name;
     private String surname;

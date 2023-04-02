@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class UserValidationDocumentInput {
+public class AddUserValidationDocumentInput {
 
     private String userId;
     private String url;
