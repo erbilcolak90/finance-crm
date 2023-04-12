@@ -5,6 +5,8 @@ import com.financecrm.webportal.input.user.GetUserByIdInput;
 import com.financecrm.webportal.input.userrole.GetUserRolesByUserIdInput;
 import com.financecrm.webportal.payload.bankaccount.BankAccountPayload;
 import com.financecrm.webportal.payload.bankaccount.CreateBankAccountPayload;
+import com.financecrm.webportal.payload.department.CreateDepartmentPayload;
+import com.financecrm.webportal.payload.department.DepartmentPayload;
 import com.financecrm.webportal.payload.tradingaccount.CreateTradingAccountPayload;
 import com.financecrm.webportal.payload.tradingaccount.TradingAccountPayload;
 import com.financecrm.webportal.payload.transfer.CreateTransferPayload;
@@ -77,5 +79,17 @@ public class MapperService {
 
     public CreateTransferPayload convertToCreateTransferPayload(Transfer transfer) {
         return modelMapper.map(transfer,CreateTransferPayload.class);
+    }
+
+    public CreateDepartmentPayload convertToCreateDepartmentPayload(Department department) {
+        return modelMapper.map(department, CreateDepartmentPayload.class);
+    }
+
+    public DepartmentPayload convertToGetDepartmentById(Department department) {
+        return modelMapper.map(department, DepartmentPayload.class);
+    }
+
+    public DepartmentPayload convertToDepartmentPayload(Department department) {
+        return modelMapper.map(department, DepartmentPayload.class);
     }
 }

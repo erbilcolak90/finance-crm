@@ -4,6 +4,7 @@ import com.financecrm.webportal.entities.*;
 import com.financecrm.webportal.enums.TransferStatus;
 import com.financecrm.webportal.enums.TransferType;
 import com.financecrm.webportal.enums.WalletAccountStatus;
+import com.financecrm.webportal.event.TransferEvent;
 import com.financecrm.webportal.input.transfer.CreateTransferInput;
 import com.financecrm.webportal.input.transfer.DeleteTransferInput;
 import com.financecrm.webportal.input.transfer.GetAllTransfersByUserIdInput;
@@ -14,6 +15,7 @@ import com.financecrm.webportal.payload.transfer.TransferPayload;
 import com.financecrm.webportal.repositories.TransferRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -40,6 +42,8 @@ public class TransferService {
     private BankAccountService bankAccountService;
     @Autowired
     private TradingAccountService tradingAccountService;
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
 
 
     public TransferPayload getTransferById(GetTransferByIdInput getTransferByIdInput) {
@@ -95,6 +99,7 @@ public class TransferService {
                 transfer.setCreateDate(new Date());
 
                 transferRepository.save(transfer);
+                eventPublisher.publishEvent(new TransferEvent(transfer,TransferType.WITHDRAW, db_walletAccount.getUserId()));
             }
             return mapperService.convertToCreateTransferPayload(transfer);
         }
@@ -121,6 +126,7 @@ public class TransferService {
                 transfer.setCreateDate(new Date());
 
                 transferRepository.save(transfer);
+                eventPublisher.publishEvent(new TransferEvent(transfer,TransferType.DEPOSIT, db_walletAccount.getUserId()));
 
             }
             return mapperService.convertToCreateTransferPayload(transfer);
@@ -157,6 +163,7 @@ public class TransferService {
                 db_walletAccount.setBalance(db_walletAccount.getBalance() - transfer.getAmount());
                 db_walletAccount.setUpdateDate(new Date());
                 walletAccountService.save(db_walletAccount);
+                eventPublisher.publishEvent(new TransferEvent(transfer,TransferType.VIREMENT_TO_TRADING_ACCOUNT, db_walletAccount.getUserId()));
 
             }
             return mapperService.convertToCreateTransferPayload(transfer);
@@ -181,7 +188,7 @@ public class TransferService {
                 transfer.setCreateDate(new Date());
 
                 setVirementToWalletBalance(createTransferInput.getAmount(), db_tradingAccount.getId(), db_walletAccount.getId(), transfer);
-
+                eventPublisher.publishEvent(new TransferEvent(transfer,TransferType.VIREMENT_TO_WALLET, db_walletAccount.getUserId()));
 
             }
             return mapperService.convertToCreateTransferPayload(transfer);
