@@ -17,5 +17,6 @@ public class Team {
     private String name;
     private String departmentId;
     private String managerId;
+    private boolean isDeleted;
 
 }

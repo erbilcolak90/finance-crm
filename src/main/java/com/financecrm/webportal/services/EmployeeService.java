@@ -16,4 +16,8 @@ public class EmployeeService {
     public Employee findById(String managerId) {
         return employeeRepository.findById(managerId).orElse(null);
     }
+
+    public void save(Employee db_employee) {
+        employeeRepository.save(db_employee);
+    }
 }
