@@ -13,8 +13,5 @@ public class UpdateEmployeeInput {
     private String email;
     private String name;
     private String phone;
-    private String managerId;
     private String teamId;
-
-
 }

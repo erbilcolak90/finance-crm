@@ -56,25 +56,21 @@ public class EmployeeService {
     public CreateEmployeePayload createEmployee(CreateEmployeeInput createEmployeeInput) {
 
         Employee db_employee = employeeRepository.findByEmail(createEmployeeInput.getEmail().toLowerCase());
-        Employee db_manager = employeeRepository.findById(createEmployeeInput.getManagerId()).orElse(null);
         GetDepartmentByIdInput getDepartmentByIdInput = new GetDepartmentByIdInput(createEmployeeInput.getDepartmentId());
         DepartmentPayload departmentPayload = departmentService.getDepartmentById(getDepartmentByIdInput);
 
         GetTeamByIdInput getTeamByIdInput = new GetTeamByIdInput(createEmployeeInput.getTeamId());
         TeamPayload teamPayload = teamService.getTeamById(getTeamByIdInput);
 
-        if(db_employee == null &&
-                db_manager != null &&
+        if (db_employee == null &&
                 departmentPayload != null &&
-                teamPayload != null &&
-                !db_manager.isDeleted()){
+                teamPayload != null) {
             Employee employee = new Employee();
             employee.setEmail(createEmployeeInput.getEmail().toLowerCase());
             employee.setPassword(bCryptPasswordEncoder.encode(createEmployeeInput.getPassword()));
             employee.setName(createEmployeeInput.getName());
             employee.setSurname(createEmployeeInput.getSurname());
             employee.setPhone(createEmployeeInput.getPhone());
-            employee.setManagerId(createEmployeeInput.getManagerId());
             employee.setDepartmentId(createEmployeeInput.getDepartmentId());
             employee.setTeamId(createEmployeeInput.getTeamId());
             employee.setJobTitle(createEmployeeInput.getJobTitle());
@@ -89,17 +85,14 @@ public class EmployeeService {
 
             return mapperService.convertToCreateEmployeePayload(employee);
 
-        }
-        else {
-            if(db_employee != null){
+        } else {
+            if (db_employee != null) {
                 log.info("this email is already exist");
-            } else if (db_manager == null) {
-                log.info("Manager not found");
             } else if (departmentPayload == null) {
                 log.info("Department not found");
             } else if (teamPayload == null) {
                 log.info("Team not found");
-            }else{
+            } else {
                 log.info("manager already deleted");
             }
             return null;
@@ -112,11 +105,11 @@ public class EmployeeService {
 
         Employee db_employee = employeeRepository.findById(deleteEmployeeInput.getId()).orElse(null);
 
-        if(db_employee != null && !db_employee.isDeleted()){
+        if (db_employee != null && !db_employee.isDeleted()) {
             db_employee.setDeleted(true);
             db_employee.setUpdateDate(new Date());
             employeeRepository.save(db_employee);
-            log.info(db_employee.getId()+" employee deleted");
+            log.info(db_employee.getId() + " employee deleted");
 
             return new DeleteEmployeePayload(true);
 
@@ -124,7 +117,7 @@ public class EmployeeService {
             if (db_employee == null) {
                 log.info("employee not found");
 
-            }else{
+            } else {
                 log.info("employee is already deleted");
             }
         }
@@ -144,7 +137,7 @@ public class EmployeeService {
     public Page<EmployeePayload> getAllEmployees(GetAllEmployeesInput getAllEmployeesInput) {
         Pageable pageable = PageRequest.of(getAllEmployeesInput.getPagination().getPage(),
                 getAllEmployeesInput.getPagination().getSize(),
-                Sort.by(Sort.Direction.valueOf(getAllEmployeesInput.getPagination().getSortBy().toString()),getAllEmployeesInput.getPagination().getFieldName()));
+                Sort.by(Sort.Direction.valueOf(getAllEmployeesInput.getPagination().getSortBy().toString()), getAllEmployeesInput.getPagination().getFieldName()));
         Page<Employee> employeePage = employeeRepository.findByIsDeletedFalse(pageable);
 
         return employeePage.map(employee -> mapperService.convertToEmployeePayload(employee));
@@ -153,31 +146,25 @@ public class EmployeeService {
     public EmployeePayload updateEmployeeInput(UpdateEmployeeInput updateEmployeeInput) {
         Employee db_employee = employeeRepository.findById(updateEmployeeInput.getId()).orElse(null);
 
-        if(db_employee != null && !db_employee.isDeleted()){
-             if(updateEmployeeInput.getEmail() != null && !updateEmployeeInput.getEmail().toLowerCase().equals(db_employee.getEmail())){
-                 db_employee.setEmail(updateEmployeeInput.getEmail());
-             }
-             if(updateEmployeeInput.getName() != null && !updateEmployeeInput.getName().equals(db_employee.getName())){
-                 db_employee.setName(updateEmployeeInput.getName());
-             }
-             if(updateEmployeeInput.getPhone() != null && !updateEmployeeInput.getPhone().equals(db_employee.getPhone())){
-                 db_employee.setPhone(updateEmployeeInput.getPhone());
-             }
-             if(updateEmployeeInput.getManagerId() != null && !updateEmployeeInput.getManagerId().equals(db_employee.getManagerId())){
-                 Employee db_manager = employeeRepository.findById(updateEmployeeInput.getManagerId()).orElse(null);
-                 if(db_manager != null && !db_manager.isDeleted()){
-                     db_employee.setManagerId(db_manager.getManagerId());
-                 }
-             }
-             if(updateEmployeeInput.getTeamId() != null && !updateEmployeeInput.getTeamId().equals(db_employee.getTeamId())){
-                 GetTeamByIdInput getTeamByIdInput = new GetTeamByIdInput(updateEmployeeInput.getTeamId());
-                 TeamPayload db_team = teamService.getTeamById(getTeamByIdInput);
-                 if(db_team != null){
-                     db_employee.setTeamId(updateEmployeeInput.getTeamId());
-                 }
-             }
-             return mapperService.convertToEmployeePayload(db_employee);
-        }else{
+        if (db_employee != null && !db_employee.isDeleted()) {
+            if (updateEmployeeInput.getEmail() != null && !updateEmployeeInput.getEmail().toLowerCase().equals(db_employee.getEmail())) {
+                db_employee.setEmail(updateEmployeeInput.getEmail());
+            }
+            if (updateEmployeeInput.getName() != null && !updateEmployeeInput.getName().equals(db_employee.getName())) {
+                db_employee.setName(updateEmployeeInput.getName());
+            }
+            if (updateEmployeeInput.getPhone() != null && !updateEmployeeInput.getPhone().equals(db_employee.getPhone())) {
+                db_employee.setPhone(updateEmployeeInput.getPhone());
+            }
+            if (updateEmployeeInput.getTeamId() != null && !updateEmployeeInput.getTeamId().equals(db_employee.getTeamId())) {
+                GetTeamByIdInput getTeamByIdInput = new GetTeamByIdInput(updateEmployeeInput.getTeamId());
+                TeamPayload db_team = teamService.getTeamById(getTeamByIdInput);
+                if (db_team != null) {
+                    db_employee.setTeamId(updateEmployeeInput.getTeamId());
+                }
+            }
+            return mapperService.convertToEmployeePayload(db_employee);
+        } else {
             return null;
         }
     }
