@@ -30,6 +30,7 @@ public class EmployeeController {
         return ResponseEntity.ok(employeeService.deleteEmployee(deleteEmployeeInput));
     }
 
+    @PostMapping("/updateEmployee")
     public ResponseEntity<EmployeePayload> updateEmployee(@RequestBody UpdateEmployeeInput updateEmployeeInput){
         return ResponseEntity.ok(employeeService.updateEmployeeInput(updateEmployeeInput));
     }
@@ -39,7 +40,7 @@ public class EmployeeController {
         return ResponseEntity.ok(employeeService.getEmployeeById(getEmployeeByIdInput));
     }
 
-    @PostMapping("/getAllEmployee")
+    @PostMapping("/getAllEmployees")
     public Page<EmployeePayload> getAllEmployees(@RequestBody GetAllEmployeesInput getAllEmployeesInput){
         return employeeService.getAllEmployees(getAllEmployeesInput);
     }

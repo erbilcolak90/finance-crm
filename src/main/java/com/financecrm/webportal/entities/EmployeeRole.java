@@ -16,4 +16,5 @@ public class EmployeeRole {
     private String id;
     private String roleId;
     private String employeeId;
+    private boolean isDeleted;
 }

@@ -13,4 +13,5 @@ public class TeamPayload {
     private String name;
     private String departmentId;
     private String managerId;
+    private boolean isDeleted;
 }

@@ -21,4 +21,5 @@ public class EmployeePayload {
     private String teamId;
     private JobTitle jobTitle;
     private EmployeeStatus status;
+    private boolean isDeleted;
 }

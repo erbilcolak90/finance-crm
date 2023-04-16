@@ -8,7 +8,7 @@ import org.springframework.data.mongodb.repository.Query;
 
 public interface TeamRepository extends MongoRepository<Team,String> {
 
-    @Query(value = "{'isDeleted': false }")
+    @Query(value = "{'name': ?0 ,'isDeleted': false }")
     Team findByName(String name);
 
     @Query(value = "{'isDeleted': false }")
