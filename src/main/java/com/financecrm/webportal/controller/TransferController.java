@@ -38,6 +38,7 @@ public class TransferController {
     @PostMapping("/getAllTransfersByUserId")
     public Page<TransferPayload> getAllTransfersByUserId(@RequestBody GetAllTransfersByUserIdInput getAllTransfersByUserIdInput){
         return transferService.getAllTransfersByUserId(getAllTransfersByUserIdInput);
+        //TODO: DB deki transfer de userId olmalı
     }
 
     @PostMapping("/createTransfer")

@@ -26,10 +26,14 @@ public class CustomUserDetailsService implements UserDetailsService {
     //This method connects to the DB to authenticate the user
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(email);
 
-        if (user == null) {
-            throw new UsernameNotFoundException(email);
+        User user;
+
+        if(email.contains(".com")){
+            user = userRepository.findByEmail(email);
+        }
+        else{
+            user = userRepository.findById(email).orElse(null);
         }
 
         // Security User for the user granted authority and another UserDetails implementation.

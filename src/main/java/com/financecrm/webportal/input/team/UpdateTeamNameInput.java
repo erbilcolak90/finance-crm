@@ -1,4 +1,4 @@
-package com.financecrm.webportal.payload.role;
+package com.financecrm.webportal.input.team;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,7 +7,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class GetRoleIdByRoleNamePayload {
+public class UpdateTeamNameInput {
 
-    private String roleId;
+    private String id;
+    private String name;
 }
