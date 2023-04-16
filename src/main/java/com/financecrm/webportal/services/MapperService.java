@@ -7,6 +7,8 @@ import com.financecrm.webportal.payload.bankaccount.BankAccountPayload;
 import com.financecrm.webportal.payload.bankaccount.CreateBankAccountPayload;
 import com.financecrm.webportal.payload.department.CreateDepartmentPayload;
 import com.financecrm.webportal.payload.department.DepartmentPayload;
+import com.financecrm.webportal.payload.employee.CreateEmployeePayload;
+import com.financecrm.webportal.payload.employee.EmployeePayload;
 import com.financecrm.webportal.payload.team.CreateTeamPayload;
 import com.financecrm.webportal.payload.team.TeamPayload;
 import com.financecrm.webportal.payload.tradingaccount.CreateTradingAccountPayload;
@@ -101,5 +103,13 @@ public class MapperService {
 
     public TeamPayload convertToTeamPayload(Team team) {
         return modelMapper.map(team, TeamPayload.class);
+    }
+
+    public CreateEmployeePayload convertToCreateEmployeePayload(Employee employee) {
+        return modelMapper.map(employee,CreateEmployeePayload.class);
+    }
+
+    public EmployeePayload convertToEmployeePayload(Employee employee) {
+        return modelMapper.map(employee,EmployeePayload.class);
     }
 }
