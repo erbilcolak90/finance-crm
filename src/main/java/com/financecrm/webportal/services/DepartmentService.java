@@ -1,7 +1,6 @@
 package com.financecrm.webportal.services;
 
 import com.financecrm.webportal.entities.Department;
-import com.financecrm.webportal.entities.Employee;
 import com.financecrm.webportal.input.department.CreateDepartmentInput;
 import com.financecrm.webportal.input.department.DeleteDepartmentInput;
 import com.financecrm.webportal.input.department.GetAllDepartmentsInput;
@@ -27,10 +26,8 @@ public class DepartmentService {
 
     @Autowired
     private DepartmentRepository departmentRepository;
-
     @Autowired
-    private EmployeeService employeeService;
-
+    private CustomUserService customUserService;
     @Autowired
     private MapperService mapperService;
 
@@ -38,9 +35,7 @@ public class DepartmentService {
     public CreateDepartmentPayload createDepartment(CreateDepartmentInput createDepartmentInput) {
 
         Department db_department = departmentRepository.findByName(createDepartmentInput.getName().toLowerCase());
-        Employee db_employee = employeeService.findById(createDepartmentInput.getManagerId());
-
-        if (db_department == null && db_employee == null ) {
+        if (db_department == null) {
             Department department = new Department();
             department.setName(createDepartmentInput.getName().toLowerCase());
             department.setManagerId(createDepartmentInput.getManagerId());
@@ -48,15 +43,15 @@ public class DepartmentService {
             departmentRepository.save(department);
             log.info("department created");
             return mapperService.convertToCreateDepartmentPayload(department);
-        }else {
-            return new CreateDepartmentPayload(null,null,null);
+        } else {
+            return new CreateDepartmentPayload(null, null, null);
         }
     }
 
     public DepartmentPayload getDepartmentById(GetDepartmentByIdInput getDepartmentByIdInput) {
 
-         Department department = departmentRepository.findById(getDepartmentByIdInput.getId()).orElse(null);
-         return mapperService.convertToGetDepartmentById(department);
+        Department department = departmentRepository.findById(getDepartmentByIdInput.getId()).orElse(null);
+        return mapperService.convertToGetDepartmentById(department);
     }
 
     public Page<DepartmentPayload> getAllDepartments(GetAllDepartmentsInput getAllDepartmentsInput) {
@@ -64,7 +59,7 @@ public class DepartmentService {
         Pageable pageable = PageRequest.of(getAllDepartmentsInput.getPagination().getPage(),
                 getAllDepartmentsInput.getPagination().getSize(),
                 Sort.by(Sort.Direction.valueOf(getAllDepartmentsInput.getPagination().getSortBy().toString()),
-                getAllDepartmentsInput.getPagination().getFieldName()));
+                        getAllDepartmentsInput.getPagination().getFieldName()));
 
         Page<Department> departmentsPage = departmentRepository.findByIsDeletedFalse(pageable);
 
@@ -75,12 +70,11 @@ public class DepartmentService {
 
         Department db_department = departmentRepository.findById(deleteDepartmentInput.getId()).orElse(null);
 
-        if(db_department != null && !db_department.isDeleted()){
+        if (db_department != null && !db_department.isDeleted()) {
             db_department.setDeleted(true);
             departmentRepository.save(db_department);
             return new DeleteDepartmentPayload(true);
-        }
-        else{
+        } else {
             log.info("db_department null or already deleted");
             return new DeleteDepartmentPayload(false);
         }

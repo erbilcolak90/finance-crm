@@ -1,6 +1,5 @@
 package com.financecrm.webportal.services;
 
-import com.financecrm.webportal.auth.TokenManager;
 import com.financecrm.webportal.entities.TradingAccount;
 import com.financecrm.webportal.entities.User;
 import com.financecrm.webportal.entities.WalletAccount;
@@ -43,8 +42,7 @@ public class TradingAccountService {
     private WalletAccountService walletAccountService;
     @Autowired
     private MapperService mapperService;
-    @Autowired
-    private TokenManager tokenManager;
+
 
     @Transactional
     public CreateTradingAccountPayload createTradingAccount(CreateTradingAccountInput createTradingAccountInput) {
@@ -69,9 +67,9 @@ public class TradingAccountService {
             Date date = new Date();
             tradingAccount.setCreateDate(date);
             tradingAccount.setUpdateDate(date);
-            log.info(createTradingAccountInput.getUserId()+ " is adding to db");
+            log.info(createTradingAccountInput.getUserId() + " is adding to db");
             tradingAccountRepository.save(tradingAccount);
-            log.info(createTradingAccountInput.getUserId()+ " is added to db");
+            log.info(createTradingAccountInput.getUserId() + " is added to db");
 
             return mapperService.convertToCreateTradingAccountPayload(tradingAccount);
 
@@ -88,9 +86,9 @@ public class TradingAccountService {
         if (db_tradingAccount != null) {
             db_tradingAccount.setDeleted(true);
             db_tradingAccount.setUpdateDate(new Date());
-            log.info(deleteTradingAccountInput.getId()+ " : is  deleting");
+            log.info(deleteTradingAccountInput.getId() + " : is  deleting");
             tradingAccountRepository.save(db_tradingAccount);
-            log.info(deleteTradingAccountInput.getId()+ " : is  deleted");
+            log.info(deleteTradingAccountInput.getId() + " : is  deleted");
             return new DeleteTradingAccountPayload(true);
         } else {
             log.info("user not found ");
@@ -110,11 +108,11 @@ public class TradingAccountService {
 
     public Page<TradingAccountPayload> getAllTradingAccountsByUserId(GetAllTradingAccountsByUserIdInput getAllTradingAccountsByUserIdInput) {
         Pageable pageable = PageRequest.of(getAllTradingAccountsByUserIdInput.getPaginationInput().getPage(),
-                 getAllTradingAccountsByUserIdInput.getPaginationInput().getSize(),
-                 Sort.by(Sort.Direction.valueOf(getAllTradingAccountsByUserIdInput.getPaginationInput().getSortBy().toString()),
-                 getAllTradingAccountsByUserIdInput.getPaginationInput().getFieldName()));
-        Page<TradingAccount> tradingAccountPage = tradingAccountRepository.findByUserIdAndIsDeletedFalse(getAllTradingAccountsByUserIdInput.getUserId(),pageable);
-        log.info(getAllTradingAccountsByUserIdInput.getUserId()+ " trading account list prepared");
+                getAllTradingAccountsByUserIdInput.getPaginationInput().getSize(),
+                Sort.by(Sort.Direction.valueOf(getAllTradingAccountsByUserIdInput.getPaginationInput().getSortBy().toString()),
+                        getAllTradingAccountsByUserIdInput.getPaginationInput().getFieldName()));
+        Page<TradingAccount> tradingAccountPage = tradingAccountRepository.findByUserIdAndIsDeletedFalse(getAllTradingAccountsByUserIdInput.getUserId(), pageable);
+        log.info(getAllTradingAccountsByUserIdInput.getUserId() + " trading account list prepared");
         return tradingAccountPage.map(tradingAccount -> mapperService.convertToTradingAccountPayload(tradingAccount));
 
     }

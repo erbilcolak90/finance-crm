@@ -35,8 +35,6 @@ public class TransferService {
     @Autowired
     private WalletAccountService walletAccountService;
     @Autowired
-    private CustomUserService customUserService;
-    @Autowired
     private MapperService mapperService;
     @Autowired
     private BankAccountService bankAccountService;
@@ -99,7 +97,7 @@ public class TransferService {
                 transfer.setCreateDate(new Date());
 
                 transferRepository.save(transfer);
-                eventPublisher.publishEvent(new TransferEvent(transfer,TransferType.WITHDRAW, db_walletAccount.getUserId()));
+                eventPublisher.publishEvent(new TransferEvent(transfer, TransferType.WITHDRAW, db_walletAccount.getUserId()));
             }
             return mapperService.convertToCreateTransferPayload(transfer);
         }
@@ -126,7 +124,7 @@ public class TransferService {
                 transfer.setCreateDate(new Date());
 
                 transferRepository.save(transfer);
-                eventPublisher.publishEvent(new TransferEvent(transfer,TransferType.DEPOSIT, db_walletAccount.getUserId()));
+                eventPublisher.publishEvent(new TransferEvent(transfer, TransferType.DEPOSIT, db_walletAccount.getUserId()));
 
             }
             return mapperService.convertToCreateTransferPayload(transfer);
@@ -163,13 +161,12 @@ public class TransferService {
                 db_walletAccount.setBalance(db_walletAccount.getBalance() - transfer.getAmount());
                 db_walletAccount.setUpdateDate(new Date());
                 walletAccountService.save(db_walletAccount);
-                eventPublisher.publishEvent(new TransferEvent(transfer,TransferType.VIREMENT_TO_TRADING_ACCOUNT, db_walletAccount.getUserId()));
+                eventPublisher.publishEvent(new TransferEvent(transfer, TransferType.VIREMENT_TO_TRADING_ACCOUNT, db_walletAccount.getUserId()));
 
             }
             return mapperService.convertToCreateTransferPayload(transfer);
 
-        }
-        else if (createTransferInput.getType().equals(TransferType.VIREMENT_TO_WALLET)) {
+        } else if (createTransferInput.getType().equals(TransferType.VIREMENT_TO_WALLET)) {
             db_walletAccount = walletAccountService.findById(createTransferInput.getToAccountId());
             db_tradingAccount = tradingAccountService.findById(createTransferInput.getFromAccountId());
 
@@ -188,7 +185,7 @@ public class TransferService {
                 transfer.setCreateDate(new Date());
 
                 setVirementToWalletBalance(createTransferInput.getAmount(), db_tradingAccount.getId(), db_walletAccount.getId(), transfer);
-                eventPublisher.publishEvent(new TransferEvent(transfer,TransferType.VIREMENT_TO_WALLET, db_walletAccount.getUserId()));
+                eventPublisher.publishEvent(new TransferEvent(transfer, TransferType.VIREMENT_TO_WALLET, db_walletAccount.getUserId()));
 
             }
             return mapperService.convertToCreateTransferPayload(transfer);

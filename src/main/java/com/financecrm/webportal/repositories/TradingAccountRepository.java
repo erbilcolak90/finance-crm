@@ -6,8 +6,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 
-public interface TradingAccountRepository extends MongoRepository<TradingAccount,String> {
+public interface TradingAccountRepository extends MongoRepository<TradingAccount, String> {
 
     @Query(value = "{'userId': ?0 , 'isDeleted': false }")
-    Page<TradingAccount> findByUserIdAndIsDeletedFalse(String userId,Pageable pageable);
+    Page<TradingAccount> findByUserIdAndIsDeletedFalse(String userId, Pageable pageable);
 }

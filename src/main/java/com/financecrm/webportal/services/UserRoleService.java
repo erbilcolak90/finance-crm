@@ -1,15 +1,14 @@
 package com.financecrm.webportal.services;
 
+import com.financecrm.webportal.entities.Role;
 import com.financecrm.webportal.entities.User;
 import com.financecrm.webportal.entities.UserRole;
 import com.financecrm.webportal.input.userrole.AddRoleToUserInput;
 import com.financecrm.webportal.input.userrole.DeleteRoleFromUserInput;
-import com.financecrm.webportal.input.role.GetRoleIdByRoleNameInput;
 import com.financecrm.webportal.input.userrole.GetUserRolesByUserIdInput;
-import com.financecrm.webportal.payload.role.DeleteRoleByNamePayload;
-import com.financecrm.webportal.payload.role.GetRoleIdByRoleNamePayload;
 import com.financecrm.webportal.payload.userrole.AddRoleToUserPayload;
 import com.financecrm.webportal.payload.userrole.DeleteRoleFromUserPayload;
+import com.financecrm.webportal.repositories.RoleRepository;
 import com.financecrm.webportal.repositories.UserRoleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,10 +28,10 @@ public class UserRoleService {
     @Autowired
     private UserRoleRepository userRoleRepository;
     @Autowired
-    private RoleService roleService;
+    private RoleRepository roleRepository;
     @Autowired
     private CustomUserService customUserService;
-
+    
     public List<String> getUserRolesByUserId(GetUserRolesByUserIdInput getUserRolesByUserIdInput) {
         User user = customUserService.findByUserId(getUserRolesByUserIdInput.getUserId());
         if (user != null) {
@@ -40,7 +39,7 @@ public class UserRoleService {
             List<String> roleNameList = new ArrayList<>();
 
             for (UserRole role : roleList) {
-                String roleName = roleService.findById(role.getRoleId());
+                String roleName = String.valueOf(roleRepository.findById(role.getRoleId()));
                 roleNameList.add(roleName);
             }
             return roleNameList;
@@ -52,16 +51,15 @@ public class UserRoleService {
     @Transactional
     public AddRoleToUserPayload addRoleToUser(AddRoleToUserInput addRoleToUserInput) {
         User user = customUserService.findByUserId(addRoleToUserInput.getUserId());
-        GetRoleIdByRoleNameInput getRoleIdByRoleNameInput = new GetRoleIdByRoleNameInput(addRoleToUserInput.getRoleName());
-        GetRoleIdByRoleNamePayload roleIdPayload = roleService.getRoleIdByRoleName(getRoleIdByRoleNameInput);
-        List<UserRole> userRoles = userRoleRepository.findByUserIdAndRoleId(addRoleToUserInput.getUserId(), roleIdPayload.getRoleId());
-        if (user != null && roleIdPayload.getRoleId() != null) {
-            if (userRoles.stream().anyMatch(userRole -> userRole.getRoleId().equals(roleIdPayload.getRoleId()))) {
+        Role db_role = roleRepository.findByName(addRoleToUserInput.getRoleName());
+        if (user != null && db_role != null) {
+            List<UserRole> userRoles = userRoleRepository.findByUserIdAndRoleId(addRoleToUserInput.getUserId(), db_role.getId());
+            if (userRoles.stream().anyMatch(userRole -> userRole.getRoleId().equals(db_role.getId()))) {
                 return new AddRoleToUserPayload("User is already has this role");
             }
             UserRole userRole = new UserRole();
             userRole.setUserId(user.getId());
-            userRole.setRoleId(roleIdPayload.getRoleId());
+            userRole.setRoleId(db_role.getId());
             userRoleRepository.save(userRole);
             log.info(userRole.getRoleId() + " role is added to user " + userRole.getUserId());
             return new AddRoleToUserPayload(addRoleToUserInput.getRoleName() + " added to " + addRoleToUserInput.getUserId());
@@ -73,11 +71,10 @@ public class UserRoleService {
     @Transactional
     public DeleteRoleFromUserPayload deleteRoleFromUser(DeleteRoleFromUserInput deleteRoleFromUserInput) {
         User user = customUserService.findByUserId(deleteRoleFromUserInput.getUserId());
-        GetRoleIdByRoleNameInput getRoleIdByRoleNameInput = new GetRoleIdByRoleNameInput(deleteRoleFromUserInput.getRoleName());
-        GetRoleIdByRoleNamePayload roleIdPayload = roleService.getRoleIdByRoleName(getRoleIdByRoleNameInput);
-        List<UserRole> userRoles = userRoleRepository.findByUserIdAndRoleId(deleteRoleFromUserInput.getUserId(), deleteRoleFromUserInput.getRoleName());
-        if (user != null && roleIdPayload.getRoleId() != null) {
-            userRoles.stream().filter(userRole -> userRole.getRoleId().equals(roleIdPayload.getRoleId()))
+        Role db_role = roleRepository.findByName(deleteRoleFromUserInput.getRoleName());
+        if (user != null && db_role != null) {
+            List<UserRole> userRoles = userRoleRepository.findByUserIdAndRoleId(deleteRoleFromUserInput.getUserId(), deleteRoleFromUserInput.getRoleName());
+            userRoles.stream().filter(userRole -> userRole.getRoleId().equals(db_role.getId()))
                     .forEach(userRole -> {
                         userRole.setDeleted(true);
                         userRoleRepository.save(userRole);

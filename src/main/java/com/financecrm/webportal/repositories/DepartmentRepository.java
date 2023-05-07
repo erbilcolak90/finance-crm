@@ -6,9 +6,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 
-public interface DepartmentRepository extends MongoRepository<Department,String> {
+import java.util.Optional;
+
+public interface DepartmentRepository extends MongoRepository<Department, String> {
 
     Department findByName(String departmentName);
+
+    @Query(value = "{'id': ?0 , 'isDeleted': false }")
+    Optional<Department> findById(String id);
 
     @Query(value = "{'isDeleted': false }")
     Page<Department> findByIsDeletedFalse(Pageable pageable);

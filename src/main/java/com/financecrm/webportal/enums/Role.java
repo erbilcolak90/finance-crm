@@ -5,4 +5,11 @@ public enum Role {
     CALL_CENTER,
     FINANCE,
     USER,
+    CEO,
+    CTO,
+    CFO,
+    MANAGER,
+    TEAM_LEAD,
+    RET_CUSTOMER_SUPPORT,
+    CUSTOMER_SUPPORT,
 }

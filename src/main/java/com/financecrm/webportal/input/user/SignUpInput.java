@@ -14,4 +14,6 @@ public class SignUpInput {
     private String email;
     private String password;
     private String phone;
+
+    //TODO: signupinput içersine role belirlemek için field eklenecek bu field eğer admin ise adminin seçtiği rol signup metodunda eklenecek.
 }

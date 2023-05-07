@@ -17,8 +17,8 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin
 public class TeamController {
 
-    @Autowired
-    private TeamService teamService;
+
+    private final TeamService teamService;
 
     @PostMapping("/createTeam")
     public ResponseEntity<CreateTeamPayload> createTeam(@RequestBody CreateTeamInput createTeamInput){

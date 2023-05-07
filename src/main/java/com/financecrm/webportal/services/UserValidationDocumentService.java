@@ -37,7 +37,6 @@ public class UserValidationDocumentService {
     @Autowired
     private MapperService mapperService;
 
-
     public UserValidationDocumentPayload getUserValidationDocumentById(GetUserValidationDocumentByIdInput getUserValidationDocumentByIdInput, HttpServletRequest request) {
         String token = jwtTokenFilter.getJwtFromRequest(request);
         String userIdFromToken = tokenManager.parseUserIdFromToken(token);
@@ -59,7 +58,7 @@ public class UserValidationDocumentService {
                     .map(mapperService::convertToUserValidationDocumentPayload)
                     .collect(Collectors.toList());
 
-        }else{
+        } else {
             return Collections.emptyList();
         }
     }

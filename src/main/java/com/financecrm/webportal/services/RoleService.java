@@ -25,11 +25,11 @@ public class RoleService {
     @Autowired
     private RoleRepository roleRepository;
 
-    public String findById(String roleId){
+    public String findById(String roleId) {
         Role role = roleRepository.findById(roleId).orElse(null);
-        if(role != null){
+        if (role != null) {
             return role.getName();
-        }else{
+        } else {
             return null;
         }
     }
@@ -42,7 +42,7 @@ public class RoleService {
             role.setName(createRoleInput.getRoleName());
             role.setDeleted(false);
             roleRepository.save(role);
-            log.info(createRoleInput.getRoleName()+ " saved");
+            log.info(createRoleInput.getRoleName() + " saved");
             return new CreateRolePayload(createRoleInput.getRoleName() + " role created");
         } else {
             return null;

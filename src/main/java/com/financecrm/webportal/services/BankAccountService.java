@@ -10,8 +10,7 @@ import com.financecrm.webportal.payload.bankaccount.BankAccountPayload;
 import com.financecrm.webportal.payload.bankaccount.CreateBankAccountPayload;
 import com.financecrm.webportal.payload.bankaccount.DeleteBankAccountPayload;
 import com.financecrm.webportal.repositories.BankAccountRepository;
-import lombok.RequiredArgsConstructor;
-import lombok.val;
+import lombok.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -28,20 +27,19 @@ public class BankAccountService {
 
     @Autowired
     private BankAccountRepository bankAccountRepository;
-
     @Autowired
     private CustomUserService customUserService;
-
     @Autowired
     private MapperService mapperService;
 
     @Transactional
     public CreateBankAccountPayload createBankAccount(CreateBankAccountInput createBankAccountInput) {
-        var bankAccount = new BankAccount();
+
         val db_bankAccount = bankAccountRepository.findByIban(createBankAccountInput.getIban());
         val db_user = customUserService.findByUserId(createBankAccountInput.getUserId());
 
         if (db_bankAccount == null && db_user != null) {
+            var bankAccount = new BankAccount();
             bankAccount.setUserId(createBankAccountInput.getUserId());
             bankAccount.setAlias(createBankAccountInput.getAlias().toLowerCase());
             bankAccount.setBankName(createBankAccountInput.getBankName());
@@ -50,11 +48,10 @@ public class BankAccountService {
             bankAccount.setSwiftCode(createBankAccountInput.getSwiftCode());
             bankAccount.setStatus(BankAccountStatus.WAITING);
             bankAccount.setDeleted(false);
-            var date = new Date();
-            bankAccount.setCreateDate(date);
-            bankAccount.setUpdateDate(date);
+            bankAccount.setCreateDate(createBankAccountInput.getCreateDate());
+            bankAccount.setUpdateDate(createBankAccountInput.getUpdateDate());
 
-            bankAccountRepository.save(bankAccount);
+            bankAccount = bankAccountRepository.save(bankAccount);
 
             return mapperService.convertToCreateBankAccountPayload(bankAccount);
 
@@ -87,8 +84,8 @@ public class BankAccountService {
         Pageable pageable = PageRequest.of(getAllBankAccountsByUserIdInput.getPaginationInput().getPage(),
                 getAllBankAccountsByUserIdInput.getPaginationInput().getSize(),
                 Sort.by(Sort.Direction.valueOf(getAllBankAccountsByUserIdInput.getPaginationInput().getSortBy().toString()),
-                getAllBankAccountsByUserIdInput.getPaginationInput().getFieldName()));
-        Page<BankAccount> bankAccountPayloadPage = bankAccountRepository.findByUserIdAndIsDeletedFalse(getAllBankAccountsByUserIdInput.getUserId(),pageable);
+                        getAllBankAccountsByUserIdInput.getPaginationInput().getFieldName()));
+        Page<BankAccount> bankAccountPayloadPage = bankAccountRepository.findByUserIdAndIsDeletedFalse(getAllBankAccountsByUserIdInput.getUserId(), pageable);
 
         return bankAccountPayloadPage.map(bankAccount -> mapperService.convertToBankAccountPayload(bankAccount));
     }

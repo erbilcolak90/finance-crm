@@ -5,7 +5,6 @@ import com.financecrm.webportal.repositories.RoleRepository;
 import com.financecrm.webportal.repositories.UserRepository;
 import com.financecrm.webportal.repositories.UserRoleRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -16,12 +15,9 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
 
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private UserRoleRepository userRoleRepository;
-    @Autowired
-    private RoleRepository roleRepository;
+    private final UserRepository userRepository;
+    private final UserRoleRepository userRoleRepository;
+    private final RoleRepository roleRepository;
 
     //This method connects to the DB to authenticate the user
     @Override
@@ -38,5 +34,9 @@ public class CustomUserDetailsService implements UserDetailsService {
 
         // Security User for the user granted authority and another UserDetails implementation.
         return new SecurityUser(user, userRoleRepository, roleRepository);
+    }
+
+    public User loadUserByUserId(String id) throws  UsernameNotFoundException{
+        return userRepository.findById(id).orElse(null);
     }
 }

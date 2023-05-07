@@ -7,8 +7,6 @@ import com.financecrm.webportal.payload.bankaccount.BankAccountPayload;
 import com.financecrm.webportal.payload.bankaccount.CreateBankAccountPayload;
 import com.financecrm.webportal.payload.department.CreateDepartmentPayload;
 import com.financecrm.webportal.payload.department.DepartmentPayload;
-import com.financecrm.webportal.payload.employee.CreateEmployeePayload;
-import com.financecrm.webportal.payload.employee.EmployeePayload;
 import com.financecrm.webportal.payload.team.CreateTeamPayload;
 import com.financecrm.webportal.payload.team.TeamPayload;
 import com.financecrm.webportal.payload.tradingaccount.CreateTradingAccountPayload;
@@ -18,6 +16,7 @@ import com.financecrm.webportal.payload.transfer.TransferPayload;
 import com.financecrm.webportal.payload.user.UserPayload;
 import com.financecrm.webportal.payload.uservalidationdocument.UserValidationDocumentPayload;
 import com.financecrm.webportal.payload.walletaccount.WalletAccountPayload;
+import lombok.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -25,10 +24,10 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
+@RequiredArgsConstructor
 public class MapperService {
 
     private final ModelMapper modelMapper = new ModelMapper();
-
     @Autowired
     private CustomUserService customUserService;
     @Autowired
@@ -67,6 +66,7 @@ public class MapperService {
 
     public CreateBankAccountPayload convertToCreateBankAccountPayload(BankAccount bankAccount) {
         return modelMapper.map(bankAccount, CreateBankAccountPayload.class);
+
     }
 
     public BankAccountPayload convertToBankAccountPayload(BankAccount bankAccount) {
@@ -74,7 +74,7 @@ public class MapperService {
     }
 
     public WalletAccountPayload convertToWalletAccountPayload(WalletAccount walletAccount) {
-        return modelMapper.map(walletAccount,WalletAccountPayload.class);
+        return modelMapper.map(walletAccount, WalletAccountPayload.class);
     }
 
     public TransferPayload convertToGetTransferPayload(Transfer transfer) {
@@ -82,7 +82,7 @@ public class MapperService {
     }
 
     public CreateTransferPayload convertToCreateTransferPayload(Transfer transfer) {
-        return modelMapper.map(transfer,CreateTransferPayload.class);
+        return modelMapper.map(transfer, CreateTransferPayload.class);
     }
 
     public CreateDepartmentPayload convertToCreateDepartmentPayload(Department department) {
@@ -103,13 +103,5 @@ public class MapperService {
 
     public TeamPayload convertToTeamPayload(Team team) {
         return modelMapper.map(team, TeamPayload.class);
-    }
-
-    public CreateEmployeePayload convertToCreateEmployeePayload(Employee employee) {
-        return modelMapper.map(employee,CreateEmployeePayload.class);
-    }
-
-    public EmployeePayload convertToEmployeePayload(Employee employee) {
-        return modelMapper.map(employee,EmployeePayload.class);
     }
 }

@@ -16,8 +16,8 @@ import javax.security.auth.login.AccountNotFoundException;
 @RequiredArgsConstructor
 public class UserController {
 
-    @Autowired
-    private CustomUserService customUserService;
+
+    private final CustomUserService customUserService;
 
     @PostMapping("/getUserById")
     public ResponseEntity<UserPayload> getUserById(@RequestBody GetUserByIdInput getUserByIdInput){
