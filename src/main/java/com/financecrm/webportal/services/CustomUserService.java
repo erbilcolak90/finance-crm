@@ -70,8 +70,6 @@ public class CustomUserService {
             walletAccountService.createWalletAccount(user.getId());
             log.info(user.getId() + " 's wallet created");
 
-            // TODO: SignUp inputta gelen rolü, oluşturulacak user için ataması yapılacak. Eğer signupinputu oluşturan kişi admin ise inputta yazılan rol eklenir. değilse sadece USER.ROLE eklenir.
-            // TODO:  Employee ile ilgili servis ve controllerlar iptal.
 
             return true;
         } else {
