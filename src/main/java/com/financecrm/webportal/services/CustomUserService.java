@@ -18,8 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Date;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
+@RequiredArgsConstructor
 public class CustomUserService {
 
     @Autowired
@@ -33,22 +33,23 @@ public class CustomUserService {
     @Autowired
     private MapperService mapperService;
 
+
     public User findByName(String username) {
         return userRepository.findByName(username);
     }
 
-    public User findByEmail(String email){
+    public User findByEmail(String email) {
         return userRepository.findByEmail(email);
     }
 
-    public User findByUserId(String userId){
-        return userRepository.findById(userId).orElse(null);
+    public User findByUserId(String userId) {
+        return userRepository.findByIdAndIsDeletedFalse(userId);
     }
 
     @Transactional
-    public boolean signUp(SignUpInput signUpInput){
+    public boolean signUp(SignUpInput signUpInput) {
         User userAtDatabase = userRepository.findByEmail(signUpInput.getEmail());
-        if(userAtDatabase == null){
+        if (userAtDatabase == null) {
             User user = new User();
             Date date = new Date();
             user.setEmail(signUpInput.getEmail());
@@ -62,21 +63,23 @@ public class CustomUserService {
             user.setCreateDate(date);
             user.setUpdateDate(date);
             userRepository.save(user);
-            log.info(user.getId()+ " is signed");
+            log.info(user.getId() + " is signed");
             AddRoleToUserInput addRoleToUserInput = new AddRoleToUserInput(user.getId(), Role.USER.toString());
             userRoleService.addRoleToUser(addRoleToUserInput);
-            log.info(user.getId()+ " ROLE.USER added ");
+            log.info(user.getId() + " ROLE.USER added ");
             walletAccountService.createWalletAccount(user.getId());
-            log.info(user.getId()+ " 's wallet created");
+            log.info(user.getId() + " 's wallet created");
+
+            // TODO: SignUp inputta gelen rolü, oluşturulacak user için ataması yapılacak. Eğer signupinputu oluşturan kişi admin ise inputta yazılan rol eklenir. değilse sadece USER.ROLE eklenir.
+            // TODO:  Employee ile ilgili servis ve controllerlar iptal.
 
             return true;
-        }
-        else{
+        } else {
             return false;
         }
     }
 
-    public UserPayload getUserById(GetUserByIdInput getUserByIdInput){
+    public UserPayload getUserById(GetUserByIdInput getUserByIdInput) {
         return mapperService.convertToUserPayload(getUserByIdInput);
     }
 }

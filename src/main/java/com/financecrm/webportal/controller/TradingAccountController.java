@@ -27,8 +27,8 @@ import java.util.Date;
 @RequiredArgsConstructor
 public class TradingAccountController {
 
-    @Autowired
-    private TradingAccountService tradingAccountService;
+
+    private final TradingAccountService tradingAccountService;
 
     @PostMapping("/getTradingAccountById")
     public ResponseEntity<TradingAccountPayload> getTradingAccountById(@RequestBody GetTradingAccountByIdInput getTradingAccountByIdInput) throws BadCredentialsException {

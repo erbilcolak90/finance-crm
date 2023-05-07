@@ -20,8 +20,8 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class TransferController {
 
-    @Autowired
-    private TransferService transferService;
+
+    private final TransferService transferService;
 
     @PostMapping("/getTransferById")
     public ResponseEntity<TransferPayload> getTransferById(@RequestBody GetTransferByIdInput getTransferByIdInput){

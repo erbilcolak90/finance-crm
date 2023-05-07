@@ -24,8 +24,8 @@ import java.util.Date;
 @RequiredArgsConstructor
 public class RoleController {
 
-    @Autowired
-    private RoleService roleService;
+
+    private final RoleService roleService;
 
     @PostMapping("/getRoleIdByRoleName")
     public ResponseEntity<GetRoleIdByRoleNamePayload> getRoleIdByRoleName(@RequestBody GetRoleIdByRoleNameInput getRoleIdByRoleNameInput) {

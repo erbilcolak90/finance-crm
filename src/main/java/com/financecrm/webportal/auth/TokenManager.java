@@ -1,14 +1,13 @@
 package com.financecrm.webportal.auth;
 
 import com.financecrm.webportal.entities.User;
-import com.financecrm.webportal.services.CustomUserService;
+import com.financecrm.webportal.repositories.UserRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Service;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.util.Date;
@@ -16,19 +15,21 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-@Service
+@Component
+@RequiredArgsConstructor
 public class TokenManager {
 
-    @Autowired
-    private CustomUserDetailsService customUserDetailsService;
-    @Autowired
-    private CustomUserService customUserService;
+    private final UserRepository userRepository;
 
     private static final int validity = 30 * 60 * 10000;
     Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
+    public User findById(String userId){
+        return userRepository.findById(userId).orElse(null);
+    }
+
     public String generateToken(String email) {
-        User user = customUserService.findByEmail(email);
+        User user = userRepository.findByEmail(email);
         Map<String, Object> claims = new HashMap<>();
         claims.put("userId", user.getId());
 

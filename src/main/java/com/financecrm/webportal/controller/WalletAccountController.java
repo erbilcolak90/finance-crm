@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin
 public class WalletAccountController {
 
-    @Autowired
-    private WalletAccountService walletAccountService;
+
+    private final WalletAccountService walletAccountService;
 
     @PostMapping("/getWalletAccountByUserId")
     public ResponseEntity<WalletAccountPayload> getWalletAccountByUserId(@RequestBody GetWalletAccountByUserIdInput getWalletAccountByUserIdInput){

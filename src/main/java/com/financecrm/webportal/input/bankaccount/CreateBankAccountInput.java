@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -17,4 +19,6 @@ public class CreateBankAccountInput {
     private String iban;
     private Currency currency;
     private String swiftCode;
+    private Date createDate = new Date();
+    private Date updateDate = new Date();
 }

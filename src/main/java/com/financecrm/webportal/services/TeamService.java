@@ -1,14 +1,13 @@
 package com.financecrm.webportal.services;
 
-import com.financecrm.webportal.entities.Employee;
+import com.financecrm.webportal.entities.Department;
 import com.financecrm.webportal.entities.Team;
-import com.financecrm.webportal.enums.JobTitle;
-import com.financecrm.webportal.input.department.GetDepartmentByIdInput;
+import com.financecrm.webportal.entities.User;
 import com.financecrm.webportal.input.team.*;
-import com.financecrm.webportal.payload.department.DepartmentPayload;
 import com.financecrm.webportal.payload.team.CreateTeamPayload;
 import com.financecrm.webportal.payload.team.DeleteTeamPayload;
 import com.financecrm.webportal.payload.team.TeamPayload;
+import com.financecrm.webportal.repositories.DepartmentRepository;
 import com.financecrm.webportal.repositories.TeamRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,39 +24,37 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 public class TeamService {
 
-
     @Autowired
     private TeamRepository teamRepository;
 
     @Autowired
-    private DepartmentService departmentService;
+    private DepartmentRepository departmentRepository;
 
     @Autowired
-    private EmployeeService employeeService;
+    private CustomUserService customUserService;
 
     @Autowired
     private MapperService mapperService;
+
 
     @Transactional
     public CreateTeamPayload createTeam(CreateTeamInput createTeamInput) {
 
         Team db_team = teamRepository.findByName(createTeamInput.getName().toLowerCase());
+        Department db_department = departmentRepository.findById(createTeamInput.getDepartmentId()).orElse(null);
 
-        GetDepartmentByIdInput getDepartmentByIdInput = new GetDepartmentByIdInput(createTeamInput.getDepartmentId());
-        DepartmentPayload db_department = departmentService.getDepartmentById(getDepartmentByIdInput);
-        Employee employee = employeeService.findById(createTeamInput.getManagerId());
 
-        if(db_team == null && db_department != null && employee != null && employee.getJobTitle().equals(JobTitle.MANAGER)){
+        if (db_team == null && db_department != null) {
             Team team = new Team();
             team.setName(createTeamInput.getName().toLowerCase());
             team.setDepartmentId(createTeamInput.getDepartmentId());
             team.setManagerId(createTeamInput.getManagerId());
             team.setDeleted(false);
             teamRepository.save(team);
-            log.info("Team : "+ team.getId() + " created");
+            log.info("Team : " + team.getId() + " created");
 
             return mapperService.convertToCreateTeamPayload(team);
-        }else {
+        } else {
             return null;
         }
     }
@@ -67,12 +64,12 @@ public class TeamService {
 
         Team team = teamRepository.findById(deleteTeamInput.getId()).orElse(null);
 
-        if(team != null && !team.isDeleted()){
+        if (team != null && !team.isDeleted()) {
             team.setDeleted(true);
             teamRepository.save(team);
             log.info("team deleted");
             return new DeleteTeamPayload(true);
-        }else{
+        } else {
             log.info("team is null or is already deleted");
             return new DeleteTeamPayload(false);
         }
@@ -86,7 +83,7 @@ public class TeamService {
     public Page<TeamPayload> getAllTeams(GetAllTeamsInput getAllTeamsInput) {
         Pageable pageable = PageRequest.of(getAllTeamsInput.getPagination().getPage(),
                 getAllTeamsInput.getPagination().getSize(),
-                Sort.by(Sort.Direction.valueOf(getAllTeamsInput.getPagination().getSortBy().toString()),getAllTeamsInput.getPagination().getFieldName()));
+                Sort.by(Sort.Direction.valueOf(getAllTeamsInput.getPagination().getSortBy().toString()), getAllTeamsInput.getPagination().getFieldName()));
 
         Page<Team> teamPage = teamRepository.findByIsDeletedFalse(pageable);
 
@@ -94,12 +91,12 @@ public class TeamService {
     }
 
     @Transactional
-    public TeamPayload updateTeamName(UpdateTeamNameInput updateTeamNameInput){
+    public TeamPayload updateTeamName(UpdateTeamNameInput updateTeamNameInput) {
 
         Team db_team = teamRepository.findById(updateTeamNameInput.getId()).orElse(null);
         Team isExistTeam = teamRepository.findByName(updateTeamNameInput.getName().toLowerCase());
 
-        if(db_team != null && isExistTeam == null && !db_team.isDeleted()){
+        if (db_team != null && isExistTeam == null && !db_team.isDeleted()) {
             db_team.setName(updateTeamNameInput.getName().toLowerCase());
             teamRepository.save(db_team);
             log.info("team name changed");
@@ -114,18 +111,16 @@ public class TeamService {
     public TeamPayload updateTeamManager(UpdateTeamManagerInput updateTeamManagerInput) {
 
         Team db_team = teamRepository.findById(updateTeamManagerInput.getTeamId()).orElse(null);
-        Employee db_employee = employeeService.findById(updateTeamManagerInput.getManagerId());
+        User db_employee = customUserService.findByUserId(updateTeamManagerInput.getManagerId());
 
-        if(db_team != null && db_employee != null && !db_team.isDeleted() && !db_employee.isDeleted() && db_employee.getJobTitle().equals(JobTitle.MANAGER) ){
+        if (db_team != null && db_employee != null && !db_team.isDeleted() && !db_employee.isDeleted()) {
             db_team.setManagerId(updateTeamManagerInput.getManagerId());
-            db_employee.setTeamId(updateTeamManagerInput.getTeamId());
             teamRepository.save(db_team);
-            employeeService.save(db_employee);
             log.info("team manager is update");
             log.info("employee team id is update");
 
             return mapperService.convertToTeamPayload(db_team);
-        } else if (db_team == null || db_employee == null || db_team.isDeleted() || db_employee.isDeleted() || !db_employee.getJobTitle().equals(JobTitle.MANAGER)) {
+        } else if (db_team == null || db_employee == null || db_team.isDeleted() || db_employee.isDeleted()) {
             log.info("team or employee not found");
         }
         return null;

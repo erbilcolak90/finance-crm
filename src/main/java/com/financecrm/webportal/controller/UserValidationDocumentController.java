@@ -24,8 +24,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserValidationDocumentController {
 
-    @Autowired
-    private UserValidationDocumentService userValidationDocumentService;
+
+    private final UserValidationDocumentService userValidationDocumentService;
 
     @PostMapping("/getUserValidationDocumentById")
     public ResponseEntity<UserValidationDocumentPayload> getUserValidationDocumentById(@RequestBody GetUserValidationDocumentByIdInput getUserValidationDocumentByIdInput, HttpServletRequest request) {

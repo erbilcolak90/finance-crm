@@ -5,9 +5,9 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.List;
 
-public interface UserRoleRepository extends MongoRepository<UserRole,String> {
+public interface UserRoleRepository extends MongoRepository<UserRole, String> {
 
-    List<UserRole> findByUserIdAndRoleId (String userId, String roleId);
+    List<UserRole> findByUserIdAndRoleId(String userId, String roleId);
 
     List<UserRole> getUserRolesByUserId(String userId);
 }

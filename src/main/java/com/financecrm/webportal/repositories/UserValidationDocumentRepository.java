@@ -5,7 +5,7 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.List;
 
-public interface UserValidationDocumentRepository extends MongoRepository<UserValidationDocument,String> {
+public interface UserValidationDocumentRepository extends MongoRepository<UserValidationDocument, String> {
 
     List<UserValidationDocument> findAllByUserId(String userId);
 }

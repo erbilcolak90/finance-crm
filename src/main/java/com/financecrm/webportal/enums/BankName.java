@@ -26,5 +26,6 @@ public enum BankName {
     IS_BANKASI,
     TURKIYEVAKIFLAR_BANKASI,
     YAPIKREDI_BANKASI,
+    TEST
     
 }

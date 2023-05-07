@@ -20,8 +20,8 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin
 public class DepartmentController {
 
-    @Autowired
-    private DepartmentService departmentService;
+
+    private final DepartmentService departmentService;
 
     @PostMapping("/createDepartment")
     public ResponseEntity<CreateDepartmentPayload> createDepartment(@RequestBody CreateDepartmentInput createDepartmentInput) {

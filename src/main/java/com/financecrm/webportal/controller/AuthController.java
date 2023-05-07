@@ -1,5 +1,6 @@
 package com.financecrm.webportal.controller;
 
+import com.financecrm.webportal.auth.CustomUserDetailsService;
 import com.financecrm.webportal.auth.TokenManager;
 import com.financecrm.webportal.input.login.LoginInput;
 import com.financecrm.webportal.input.user.SignUpInput;
@@ -30,17 +31,17 @@ import java.util.Date;
 @RequiredArgsConstructor
 public class AuthController {
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
 
-    @Autowired
-    private TokenManager tokenManager;
+    private final AuthenticationManager authenticationManager;
 
-    @Autowired
-    private CustomUserService customUserService;
 
-    @Autowired
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final TokenManager tokenManager;
+
+
+    private final CustomUserService customUserService;
+
+
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @PostMapping("/login")
     public ResponseEntity<LoginPayload> login(@RequestBody LoginInput loginInput) {

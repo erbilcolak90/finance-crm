@@ -25,8 +25,8 @@ import java.util.List;
 @CrossOrigin
 public class UserRoleController {
 
-    @Autowired
-    private UserRoleService userRoleService;
+
+    private final UserRoleService userRoleService;
 
     @PostMapping("/addRoleToUser")
     public ResponseEntity<AddRoleToUserPayload> addRoleToUser(@RequestBody AddRoleToUserInput addRoleToUserInput) throws AccountNotFoundException {

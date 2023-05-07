@@ -1,9 +1,7 @@
 package com.financecrm.webportal.auth;
 
 import com.financecrm.webportal.entities.User;
-import com.financecrm.webportal.services.CustomUserService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,18 +18,11 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Component
+@RequiredArgsConstructor
 public class JwtTokenFilter extends OncePerRequestFilter {
 
-
-    @Autowired
-    private TokenManager tokenManager;
-    @Autowired
-    private CustomUserDetailsService customUserDetailsService;
-    @Autowired
-    private CustomUserService customUserService;
-    @Autowired
-    private AuthenticationManager authenticationManager;
-
+    private final TokenManager tokenManager;
+    private final CustomUserDetailsService customUserDetailsService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -42,7 +33,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
                 if(StringUtils.hasText(jwt) && tokenManager.tokenValidate(jwt)){
                     userId = tokenManager.parseUserIdFromToken(jwt);
-                    User user = customUserService.findByUserId(userId);
+                    User user = tokenManager.findById(userId);
                     UserDetails userDetails = customUserDetailsService.loadUserByUsername(user.getEmail());
 
                     if(!user.isDeleted()){
