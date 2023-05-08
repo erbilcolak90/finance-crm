@@ -4,4 +4,5 @@ public enum UserStatus {
     APPROVED,
     WAITING,
     DENIED,
+    TEST,
 }
