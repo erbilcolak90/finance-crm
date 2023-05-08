@@ -1,6 +1,7 @@
 package com.financecrm.webportal.services;
 
 import com.financecrm.webportal.entities.BankAccount;
+import com.financecrm.webportal.entities.User;
 import com.financecrm.webportal.enums.BankAccountStatus;
 import com.financecrm.webportal.input.bankaccount.CreateBankAccountInput;
 import com.financecrm.webportal.input.bankaccount.DeleteBankAccountInput;
@@ -50,11 +51,9 @@ public class BankAccountService {
             bankAccount.setDeleted(false);
             bankAccount.setCreateDate(createBankAccountInput.getCreateDate());
             bankAccount.setUpdateDate(createBankAccountInput.getUpdateDate());
-
             bankAccount = bankAccountRepository.save(bankAccount);
 
             return mapperService.convertToCreateBankAccountPayload(bankAccount);
-
         } else {
             return null;
         }
@@ -70,23 +69,29 @@ public class BankAccountService {
 
             return new DeleteBankAccountPayload(true);
         } else {
-            return null;
+            return new DeleteBankAccountPayload(false);
         }
     }
 
     public BankAccountPayload getBankAccountById(GetBankAccountByIdInput getBankAccountByIdInput) {
         val db_bankAccount = bankAccountRepository.findById(getBankAccountByIdInput.getId()).orElse(null);
-            return mapperService.convertToBankAccountPayload(db_bankAccount);
+        return mapperService.convertToBankAccountPayload(db_bankAccount);
     }
 
     public Page<BankAccountPayload> getAllBankAccountsByUserId(GetAllBankAccountsByUserIdInput getAllBankAccountsByUserIdInput) {
-        Pageable pageable = PageRequest.of(getAllBankAccountsByUserIdInput.getPaginationInput().getPage(),
-                getAllBankAccountsByUserIdInput.getPaginationInput().getSize(),
-                Sort.by(Sort.Direction.valueOf(getAllBankAccountsByUserIdInput.getPaginationInput().getSortBy().toString()),
-                        getAllBankAccountsByUserIdInput.getPaginationInput().getFieldName()));
-        Page<BankAccount> bankAccountPayloadPage = bankAccountRepository.findByUserIdAndIsDeletedFalse(getAllBankAccountsByUserIdInput.getUserId(), pageable);
+        User user = customUserService.findByUserId(getAllBankAccountsByUserIdInput.getUserId());
 
-        return bankAccountPayloadPage.map(bankAccount -> mapperService.convertToBankAccountPayload(bankAccount));
+        if (user != null && !user.isDeleted()) {
+            Pageable pageable = PageRequest.of(getAllBankAccountsByUserIdInput.getPaginationInput().getPage(),
+                    getAllBankAccountsByUserIdInput.getPaginationInput().getSize(),
+                    Sort.by(Sort.Direction.valueOf(getAllBankAccountsByUserIdInput.getPaginationInput().getSortBy().toString()),
+                            getAllBankAccountsByUserIdInput.getPaginationInput().getFieldName()));
+            Page<BankAccount> bankAccountPayloadPage = bankAccountRepository.findByUserIdAndIsDeletedFalse(getAllBankAccountsByUserIdInput.getUserId(), pageable);
+
+            return bankAccountPayloadPage.map(bankAccount -> mapperService.convertToBankAccountPayload(bankAccount));
+        } else {
+            return null;
+        }
     }
 
     public BankAccount findById(String id) {
