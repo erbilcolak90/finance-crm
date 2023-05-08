@@ -15,7 +15,7 @@ public interface UserRepository extends MongoRepository<User, String> {
     @Query(value = "{ 'isDeleted': false }")
     Page<User> findByIsDeletedFalse(Pageable pageable);
 
-    @Query(value = "{'id': userId , 'isDeleted': false}")
+    @Query(value = "{'id': ?0 , 'isDeleted': false}")
     User findByIdAndIsDeletedFalse(String userId);
 
 }
