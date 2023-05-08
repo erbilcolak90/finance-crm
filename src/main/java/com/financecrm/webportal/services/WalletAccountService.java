@@ -29,7 +29,7 @@ public class WalletAccountService {
 
 
     public WalletAccount getByUserId(String userId){
-        return walletAccountRepository.getByUserId(userId);
+        return walletAccountRepository.findByUserId(userId).orElse(null);
     }
 
     public WalletAccount findById(String fromAccountId) {
@@ -55,7 +55,7 @@ public class WalletAccountService {
     }
 
     public WalletAccountPayload getWalletAccountByUserId(GetWalletAccountByUserIdInput getWalletAccountByUserIdInput) {
-        val db_wallet = walletAccountRepository.getByUserId(getWalletAccountByUserIdInput.getUserId());
+        val db_wallet = walletAccountRepository.findByUserId(getWalletAccountByUserIdInput.getUserId()).orElse(null);
 
         if(db_wallet != null){
             return mapperService.convertToWalletAccountPayload(db_wallet);

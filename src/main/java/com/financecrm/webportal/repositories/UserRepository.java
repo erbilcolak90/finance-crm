@@ -6,16 +6,20 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 
+import java.util.Optional;
+
 public interface UserRepository extends MongoRepository<User, String> {
 
-    User findByName(String username);
+    @Query(value = "{'username': ?0 , 'isDeleted': false }")
+    Optional<User> findByName(String username);
 
-    User findByEmail(String email);
+    @Query(value = "{'email': ?0 , 'isDeleted': false }")
+    Optional<User> findByEmail(String email);
 
     @Query(value = "{ 'isDeleted': false }")
     Page<User> findByIsDeletedFalse(Pageable pageable);
 
     @Query(value = "{'id': ?0 , 'isDeleted': false}")
-    User findByIdAndIsDeletedFalse(String userId);
+    Optional<User> findById(String userId);
 
 }

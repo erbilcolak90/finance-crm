@@ -26,7 +26,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         User user;
 
         if(email.contains(".com")){
-            user = userRepository.findByEmail(email);
+            user = userRepository.findByEmail(email).orElse(null);
         }
         else{
             user = userRepository.findById(email).orElse(null);

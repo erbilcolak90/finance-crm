@@ -35,20 +35,20 @@ public class CustomUserService {
 
 
     public User findByName(String username) {
-        return userRepository.findByName(username);
+        return userRepository.findByName(username).orElse(null);
     }
 
     public User findByEmail(String email) {
-        return userRepository.findByEmail(email);
+        return userRepository.findByEmail(email).orElse(null);
     }
 
     public User findByUserId(String userId) {
-        return userRepository.findByIdAndIsDeletedFalse(userId);
+        return userRepository.findById(userId).orElse(null);
     }
 
     @Transactional
     public boolean signUp(SignUpInput signUpInput) {
-        User userAtDatabase = userRepository.findByEmail(signUpInput.getEmail());
+        User userAtDatabase = userRepository.findByEmail(signUpInput.getEmail()).orElse(null);
         if (userAtDatabase == null) {
             User user = new User();
             Date date = new Date();

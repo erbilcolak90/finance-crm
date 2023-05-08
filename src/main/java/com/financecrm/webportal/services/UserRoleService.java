@@ -51,7 +51,7 @@ public class UserRoleService {
     @Transactional
     public AddRoleToUserPayload addRoleToUser(AddRoleToUserInput addRoleToUserInput) {
         User user = customUserService.findByUserId(addRoleToUserInput.getUserId());
-        Role db_role = roleRepository.findByName(addRoleToUserInput.getRoleName());
+        Role db_role = roleRepository.findByName(addRoleToUserInput.getRoleName()).orElse(null);
         if (user != null && db_role != null) {
             List<UserRole> userRoles = userRoleRepository.findByUserIdAndRoleId(addRoleToUserInput.getUserId(), db_role.getId());
             if (userRoles.stream().anyMatch(userRole -> userRole.getRoleId().equals(db_role.getId()))) {
@@ -71,7 +71,7 @@ public class UserRoleService {
     @Transactional
     public DeleteRoleFromUserPayload deleteRoleFromUser(DeleteRoleFromUserInput deleteRoleFromUserInput) {
         User user = customUserService.findByUserId(deleteRoleFromUserInput.getUserId());
-        Role db_role = roleRepository.findByName(deleteRoleFromUserInput.getRoleName());
+        Role db_role = roleRepository.findByName(deleteRoleFromUserInput.getRoleName()).orElse(null);
         if (user != null && db_role != null) {
             List<UserRole> userRoles = userRoleRepository.findByUserIdAndRoleId(deleteRoleFromUserInput.getUserId(), deleteRoleFromUserInput.getRoleName());
             userRoles.stream().filter(userRole -> userRole.getRoleId().equals(db_role.getId()))
