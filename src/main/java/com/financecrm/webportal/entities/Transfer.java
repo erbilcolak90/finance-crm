@@ -18,6 +18,7 @@ public class Transfer {
 
     @Id
     private String id;
+    private String userId;
     private String fromAccountId;
     private String toAccountId;
     private double amount;

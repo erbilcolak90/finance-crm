@@ -42,6 +42,8 @@ public class TransferService {
     private TradingAccountService tradingAccountService;
     @Autowired
     private ApplicationEventPublisher eventPublisher;
+    @Autowired
+    private CustomUserService customUserService;
 
 
     public TransferPayload getTransferById(GetTransferByIdInput getTransferByIdInput) {
@@ -67,12 +69,14 @@ public class TransferService {
     @Transactional
     public CreateTransferPayload createTransfer(CreateTransferInput createTransferInput) throws InterruptedException {
 
-
-        WalletAccount db_walletAccount = null;
-        BankAccount db_bankAccount = null;
-        TradingAccount db_tradingAccount = null;
-        Transfer transfer = null;
-
+        User db_user = customUserService.findByUserId(createTransferInput.getUserId());
+        WalletAccount db_walletAccount;
+        BankAccount db_bankAccount;
+        TradingAccount db_tradingAccount;
+        Transfer transfer;
+        if(db_user == null || db_user.isDeleted()){
+            return null;
+        }
         // transfer tipi withdrawsa inputtaki fromAccountId = walletAccount, walletAccount.Amount u ile input.Amount kontrol edilecek
         // transfer işlemi onaya düşmeli direkt transfer işlemi balance lar arasında yapılamaz.
         // ayrıca input.to kullanıcının bankAccountlarından getirilip kontrol edilecek.
@@ -94,12 +98,13 @@ public class TransferService {
                 // TODO : balance aktarımları DEPOSIT ve WITHDRAW da processler ile birlikte admin onaylarıyla gerçekleşecek.
                 // buradaki balance sadece transfer işleminde gerçekleşecek tutarı belirtmekte.
                 transfer.setAmount(createTransferInput.getAmount());
-                transfer.setCreateDate(new Date());
+                transfer.setCreateDate(createTransferInput.getDate());
 
                 transferRepository.save(transfer);
                 eventPublisher.publishEvent(new TransferEvent(transfer, TransferType.WITHDRAW, db_walletAccount.getUserId()));
+                return mapperService.convertToCreateTransferPayload(transfer);
             }
-            return mapperService.convertToCreateTransferPayload(transfer);
+
         }
 
         // transfer tipi deposit ise fromAccountId = user ın bank accountları ile kıyaslanacak. Amount kontrolü pozitiflik için yapılacak.
@@ -121,13 +126,13 @@ public class TransferService {
                 transfer.setDeleted(false);
                 transfer.setStatus(TransferStatus.WAITING);
                 transfer.setAmount(createTransferInput.getAmount());
-                transfer.setCreateDate(new Date());
+                transfer.setCreateDate(createTransferInput.getDate());
 
                 transferRepository.save(transfer);
                 eventPublisher.publishEvent(new TransferEvent(transfer, TransferType.DEPOSIT, db_walletAccount.getUserId()));
-
+                return mapperService.convertToCreateTransferPayload(transfer);
             }
-            return mapperService.convertToCreateTransferPayload(transfer);
+
         }
         // transfer tipi virman ise fromAccountId walletid de olabilir tradeAccountId de olabilir.
         // her 2 si için kontrol yapılmalı.
@@ -151,20 +156,19 @@ public class TransferService {
                 transfer.setDeleted(false);
                 transfer.setStatus(TransferStatus.APPROVED);
                 transfer.setAmount(createTransferInput.getAmount());
-                transfer.setCreateDate(new Date());
+                transfer.setCreateDate(createTransferInput.getDate());
                 transferRepository.save(transfer);
 
                 db_tradingAccount.setBalance(db_tradingAccount.getBalance() + transfer.getAmount());
-                db_tradingAccount.setUpdateDate(new Date());
+                db_tradingAccount.setUpdateDate(createTransferInput.getDate());
                 tradingAccountService.save(db_tradingAccount);
 
                 db_walletAccount.setBalance(db_walletAccount.getBalance() - transfer.getAmount());
-                db_walletAccount.setUpdateDate(new Date());
+                db_walletAccount.setUpdateDate(createTransferInput.getDate());
                 walletAccountService.save(db_walletAccount);
                 eventPublisher.publishEvent(new TransferEvent(transfer, TransferType.VIREMENT_TO_TRADING_ACCOUNT, db_walletAccount.getUserId()));
-
+                return mapperService.convertToCreateTransferPayload(transfer);
             }
-            return mapperService.convertToCreateTransferPayload(transfer);
 
         } else if (createTransferInput.getType().equals(TransferType.VIREMENT_TO_WALLET)) {
             db_walletAccount = walletAccountService.findById(createTransferInput.getToAccountId());
@@ -182,16 +186,17 @@ public class TransferService {
                 transfer.setDeleted(false);
                 transfer.setStatus(TransferStatus.APPROVED);
                 transfer.setAmount(createTransferInput.getAmount());
-                transfer.setCreateDate(new Date());
+                transfer.setCreateDate(createTransferInput.getDate());
 
-                setVirementToWalletBalance(createTransferInput.getAmount(), db_tradingAccount.getId(), db_walletAccount.getId(), transfer);
+                setVirementToWalletBalance(createTransferInput.getAmount(), db_tradingAccount.getId(), db_walletAccount.getId(), transfer, createTransferInput.getDate());
                 eventPublisher.publishEvent(new TransferEvent(transfer, TransferType.VIREMENT_TO_WALLET, db_walletAccount.getUserId()));
-
+                return mapperService.convertToCreateTransferPayload(transfer);
             }
-            return mapperService.convertToCreateTransferPayload(transfer);
+
         } else {
-            return null;
+            return new CreateTransferPayload();
         }
+        return null;
     }
 
     @Transactional
@@ -212,7 +217,7 @@ public class TransferService {
     }
 
     @Async
-    public void setVirementToWalletBalance(double amount, String db_tradingAccountId, String db_walletAccountId, Transfer transfer) throws InterruptedException {
+    public void setVirementToWalletBalance(double amount, String db_tradingAccountId, String db_walletAccountId, Transfer transfer, Date date) throws InterruptedException {
 
         Thread.sleep(5_000);
         TradingAccount db_tradingAccount = tradingAccountService.findById(db_tradingAccountId);
@@ -224,11 +229,11 @@ public class TransferService {
             transferRepository.save(transfer);
 
             db_tradingAccount.setBalance(db_tradingAccount.getBalance() - amount);
-            db_tradingAccount.setUpdateDate(new Date());
+            db_tradingAccount.setUpdateDate(date);
             tradingAccountService.save(db_tradingAccount);
 
             db_walletAccount.setBalance(db_walletAccount.getBalance() + amount);
-            db_walletAccount.setUpdateDate(new Date());
+            db_walletAccount.setUpdateDate(date);
             walletAccountService.save(db_walletAccount);
 
         } else {
