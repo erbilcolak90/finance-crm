@@ -12,6 +12,10 @@ import com.financecrm.webportal.repositories.RoleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,7 +40,7 @@ public class RoleService {
 
     @Transactional
     public CreateRolePayload createRole(CreateRoleInput createRoleInput) {
-        Role db_role = roleRepository.findByName(createRoleInput.getRoleName());
+        Role db_role = roleRepository.findByName(createRoleInput.getRoleName()).orElse(null);
         if (db_role == null) {
             Role role = new Role();
             role.setName(createRoleInput.getRoleName());
@@ -51,7 +55,7 @@ public class RoleService {
 
     @Transactional
     public DeleteRoleByNamePayload deleteRoleByName(DeleteRoleByNameInput deleteRoleByNameInput) {
-        Role db_role = roleRepository.findByName(deleteRoleByNameInput.getRoleName());
+        Role db_role = roleRepository.findByName(deleteRoleByNameInput.getRoleName()).orElse(null);
         if (db_role != null) {
             db_role.setDeleted(false);
             roleRepository.save(db_role);
@@ -63,7 +67,7 @@ public class RoleService {
     }
 
     public GetRoleIdByRoleNamePayload getRoleIdByRoleName(GetRoleIdByRoleNameInput getRoleIdByRoleNameInput) {
-        Role role = roleRepository.findByName(getRoleIdByRoleNameInput.getRoleName());
+        Role role = roleRepository.findByName(getRoleIdByRoleNameInput.getRoleName()).orElse(null);
         if (role != null) {
             return new GetRoleIdByRoleNamePayload(role.getId());
         } else {
@@ -71,10 +75,9 @@ public class RoleService {
         }
     }
 
-    public List<Role> getAllRoles(PaginationInput paginationInput) {
-        // TODO: pagination - replaced with List<Role>
-        // Pageable pageable = PageRequest.of(pagination.getPage(), pagination.getSize(), Sort.by(Sort.Direction.valueOf(pagination.getSortBy().toString()), pagination.getFieldName()));
-        return roleRepository.findAll();
+    public Page<Role> getAllRoles(PaginationInput paginationInput) {
+        Pageable pageable = PageRequest.of(paginationInput.getPage(), paginationInput.getSize(), Sort.by(Sort.Direction.valueOf(paginationInput.getSortBy().toString()), paginationInput.getFieldName()));
+        return roleRepository.findByIsDeletedFalse(pageable);
     }
 
 }

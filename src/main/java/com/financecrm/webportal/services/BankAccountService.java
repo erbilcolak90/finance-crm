@@ -35,7 +35,7 @@ public class BankAccountService {
     @Transactional
     public CreateBankAccountPayload createBankAccount(CreateBankAccountInput createBankAccountInput) {
 
-        val db_bankAccount = bankAccountRepository.findByIban(createBankAccountInput.getIban());
+        val db_bankAccount = bankAccountRepository.findByIban(createBankAccountInput.getIban()).orElse(null);
         val db_user = customUserService.findByUserId(createBankAccountInput.getUserId());
 
         if (db_bankAccount == null && db_user != null) {
@@ -76,9 +76,8 @@ public class BankAccountService {
 
     public BankAccountPayload getBankAccountById(GetBankAccountByIdInput getBankAccountByIdInput) {
         val db_bankAccount = bankAccountRepository.findById(getBankAccountByIdInput.getId()).orElse(null);
-        return mapperService.convertToBankAccountPayload(db_bankAccount);
+            return mapperService.convertToBankAccountPayload(db_bankAccount);
     }
-    // TODO: getById' li tüm metodlarda isDeletedFalse olanlar gelecek.
 
     public Page<BankAccountPayload> getAllBankAccountsByUserId(GetAllBankAccountsByUserIdInput getAllBankAccountsByUserIdInput) {
         Pageable pageable = PageRequest.of(getAllBankAccountsByUserIdInput.getPaginationInput().getPage(),

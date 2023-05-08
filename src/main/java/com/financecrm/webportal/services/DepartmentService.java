@@ -34,7 +34,7 @@ public class DepartmentService {
     @Transactional
     public CreateDepartmentPayload createDepartment(CreateDepartmentInput createDepartmentInput) {
 
-        Department db_department = departmentRepository.findByName(createDepartmentInput.getName().toLowerCase());
+        Department db_department = departmentRepository.findByName(createDepartmentInput.getName().toLowerCase()).orElse(null);
         if (db_department == null) {
             Department department = new Department();
             department.setName(createDepartmentInput.getName().toLowerCase());

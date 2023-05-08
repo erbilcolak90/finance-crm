@@ -29,7 +29,7 @@ public class TokenManager {
     }
 
     public String generateToken(String email) {
-        User user = userRepository.findByEmail(email);
+        User user = userRepository.findByEmail(email).orElse(null);
         Map<String, Object> claims = new HashMap<>();
         claims.put("userId", user.getId());
 

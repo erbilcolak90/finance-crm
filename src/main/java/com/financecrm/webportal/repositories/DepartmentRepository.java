@@ -10,7 +10,8 @@ import java.util.Optional;
 
 public interface DepartmentRepository extends MongoRepository<Department, String> {
 
-    Department findByName(String departmentName);
+    @Query(value = "{'name': ?0 , 'isDeleted': false }")
+    Optional<Department> findByName(String departmentName);
 
     @Query(value = "{'id': ?0 , 'isDeleted': false }")
     Optional<Department> findById(String id);
