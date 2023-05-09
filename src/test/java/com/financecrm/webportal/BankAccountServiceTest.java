@@ -66,9 +66,7 @@ class BankAccountServiceTest {
         User db_user = new User("test_userId","test_email","test_password","test_name","test_surname","test_phone","test_representativeEmployeeId", UserStatus.TEST,false,new Date(),new Date());
 
         //3. adım : bağımlı servicelerin davranışlarının belirlenmesi
-        Mockito.when(bankAccountRepository.findByIban(createBankAccountInput.getIban())).thenReturn(null);
         Mockito.when(customUserService.findByUserId(createBankAccountInput.getUserId())).thenReturn(db_user);
-        Mockito.when(customUserService.findByUserId(createBankAccountInput.getUserId())).thenReturn(new User());
         Mockito.when(bankAccountRepository.findByIban("test_iban")).thenReturn(Optional.ofNullable(dbBankAccount));
         Mockito.when(bankAccountRepository.save(beforeSavedBankAccount)).thenReturn(bankAccount);
         Mockito.when(mapperService.convertToCreateBankAccountPayload(bankAccount)).thenReturn(result);
