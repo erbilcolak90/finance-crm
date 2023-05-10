@@ -110,14 +110,32 @@ class BankAccountServiceTest {
         Mockito.verify(customUserService).findByUserId(createBankAccountInput.getUserId());
     }
 
+    @DisplayName("shold return null when bankaccount does not exist and user does not exist from createbankaccountinput")
+    @Tag("createBankAccount")
+    @Test
+    void sholdReturnNull_whenBankAccountDoesNotExistAndUserDoesNotExistFromCreateBankAccountInput(){
+        // 2. adım: değişkenlerin belirlenmesi
+        CreateBankAccountInput createBankAccountInput = new CreateBankAccountInput("test_userId", "test_alias", BankName.TEST, "test_iban", Currency.TEST, "test_swiftCode", new Date(), new Date());
+        // 3. adım : bağımlı değişkenlerin davranışları
+        Mockito.when(bankAccountRepository.findByIban("test_iban")).thenReturn(Optional.empty());
+        Mockito.when(customUserService.findByUserId(createBankAccountInput.getUserId())).thenReturn(null);
+        // 4. adım : test metodunun çalıştırılması
+        CreateBankAccountPayload expectedResult = bankAccountService.createBankAccount(createBankAccountInput);
+        // 5. adım: test sonuçlarının karşılaştırılması
+        assertNull(expectedResult);
+        // 6. adım : bağımlı servislerin çalışmasının kontrolü
+        Mockito.verify(bankAccountRepository).findByIban(anyString());
+        Mockito.verify(customUserService).findByUserId(createBankAccountInput.getUserId());
+    }
+
     // 1. adım :Test isminin yazılması
-    @DisplayName("should Return DeleteBankAccountPayload when BankAccount IsExist From DeleteBankAccountInput")
+    @DisplayName("should Return DeleteBankAccountPayload Status True when BankAccount IsExist From DeleteBankAccountInput")
     @Tag("deleteBankAccount")
     @Test
-    void shouldReturnDeleteBankAccountPayload_whenBankAccountIsExistFromDeleteBankAccountInput(){
+    void shouldReturnDeleteBankAccountPayloadStatusTrue_whenBankAccountIsExistFromDeleteBankAccountInput(){
         // 2. adım :  test verilerinin hazırlanması
-        DeleteBankAccountInput deleteBankAccountInput = new DeleteBankAccountInput("test_id");
-        BankAccount db_bankAccount = new BankAccount("test_id", "test_userId", "test_alias", BankName.TEST, "test_iban", Currency.TEST, "test_swiftCode", BankAccountStatus.WAITING, false, new Date(), new Date());
+        DeleteBankAccountInput deleteBankAccountInput = new DeleteBankAccountInput("test_id",new Date());
+        BankAccount db_bankAccount = new BankAccount("test_id", "test_userId", "test_alias", BankName.TEST, "test_iban", Currency.TEST, "test_swiftCode", BankAccountStatus.WAITING, false, deleteBankAccountInput.getDate(), deleteBankAccountInput.getDate());
         DeleteBankAccountPayload result = new DeleteBankAccountPayload(true);
 
         // 3. adım : bağımlı değişkenlerin davranışlarının belirlenmesi
@@ -137,12 +155,12 @@ class BankAccountServiceTest {
     }
 
     // 1. adım :Test isminin yazılması
-    @DisplayName("should Return DeleteBankAccountPayload when BankAccount Does Not Exist From DeleteBankAccountInput")
+    @DisplayName("should Return DeleteBankAccountPayload Status False when BankAccount Does Not Exist From DeleteBankAccountInput")
     @Tag("deleteBankAccount")
     @Test
-    void shouldReturnDeleteBankAccountPayload_whenBankAccountDoesNotExistFromDeleteBankAccountInput(){
+    void shouldReturnDeleteBankAccountPayloadStatusFalse_whenBankAccountDoesNotExistFromDeleteBankAccountInput(){
         // 2. adım :  test verilerinin hazırlanması
-        DeleteBankAccountInput deleteBankAccountInput = new DeleteBankAccountInput("test_id");
+        DeleteBankAccountInput deleteBankAccountInput = new DeleteBankAccountInput("test_id",new Date());
         DeleteBankAccountPayload result = new DeleteBankAccountPayload(false);
 
         // 3. adım : bağımlı değişkenlerin davranışlarının belirlenmesi
@@ -154,6 +172,24 @@ class BankAccountServiceTest {
         // 5. adım : test sonuçlarının karşılaştırılması
         assertEquals(expectedResult.isStatus(),result.isStatus());
 
+        // 6. adım : bağımlı servislerinin çalıştırıldığının kontrol edilmesi
+        Mockito.verify(bankAccountRepository).findById(deleteBankAccountInput.getId());
+    }
+
+    @DisplayName("should Return DeleteBankAccountPayload Status False when BankAccount Is Exist But IsDeleted True From DeleteBankAccountInput")
+    @Tag("deleteBankAccount")
+    @Test
+    void shouldReturnDeleteBankAccountPayloadStatusFalse_whenBankAccountIsExistButIsDeletedTrueFromDeleteBankAccountInput(){
+        // 2. adım :  test verilerinin hazırlanması
+        DeleteBankAccountInput deleteBankAccountInput = new DeleteBankAccountInput("test_id",new Date());
+        DeleteBankAccountPayload result = new DeleteBankAccountPayload(false);
+        BankAccount bankAccount = new BankAccount("test_id", "test_UserId", "test_alias", BankName.AK_BANK, "test_iban", Currency.USD, "test_swiftCode", BankAccountStatus.WAITING, true, deleteBankAccountInput.getDate(), deleteBankAccountInput.getDate());
+        // 3. adım : bağımlı değişkenlerin davranışlarının belirlenmesi
+        Mockito.when(bankAccountRepository.findById(deleteBankAccountInput.getId())).thenReturn(Optional.of(bankAccount));
+        // 4. adım : test metodunun çalıştırılması
+        DeleteBankAccountPayload expectedResult = bankAccountService.deleteBankAccount(deleteBankAccountInput);
+        // 5. adım : test sonuçlarının karşılaştırılması
+        assertEquals(expectedResult.isStatus(),result.isStatus());
         // 6. adım : bağımlı servislerinin çalıştırıldığının kontrol edilmesi
         Mockito.verify(bankAccountRepository).findById(deleteBankAccountInput.getId());
     }
@@ -234,23 +270,18 @@ class BankAccountServiceTest {
                 Sort.by(Sort.Direction.valueOf(getAllBankAccountsByUserIdInput.getPaginationInput().getSortBy().toString()),
                         getAllBankAccountsByUserIdInput.getPaginationInput().getFieldName()));
 
-
         // 3. adım : bağımlı değişkenlerin davranışlarının belirlenmesi
         Mockito.when(customUserService.findByUserId("test_userId")).thenReturn(db_user);
         Mockito.when(bankAccountRepository.findByUserIdAndIsDeletedFalse("test_userId",pageable)).thenReturn(bankAccountPage);
         Mockito.when(mapperService.convertToBankAccountPayload(db_bankAccount)).thenReturn(new BankAccountPayload());
-
         // 4. adım : test metodunun çalıştırılması
         Page<BankAccountPayload> expectedResult = bankAccountService.getAllBankAccountsByUserId(getAllBankAccountsByUserIdInput);
-
         // 5. adım : test sonuçlarının karşılaştırılması
         assertEquals(1,expectedResult.getContent().size());
-
         // 6. adım : bağımlı değişkenlerin çalıştığının doğrulanması
         Mockito.verify(customUserService).findByUserId("test_userId");
         Mockito.verify(bankAccountRepository).findByUserIdAndIsDeletedFalse("test_userId",pageable);
         Mockito.verify(mapperService).convertToBankAccountPayload(db_bankAccount);
-
     }
 
     // 1. adım : test adının yazılması
@@ -286,9 +317,18 @@ class BankAccountServiceTest {
         assertEquals(expectedResult.getId(),db_bankAccount.getId());
 
         Mockito.verify(bankAccountRepository).findById(id);
-
     }
 
+    @DisplayName("should return null when id does not exist")
+    @Tag("findById")
+    @Test
+    void shouldReturnNull_whenIdDoesNotExist(){
+        String id = "test_id";
+        Mockito.when(bankAccountRepository.findById(id)).thenReturn(Optional.empty());
+        BankAccount expectedResult = bankAccountService.findById(id);
+        assertNull(expectedResult);
+        Mockito.verify(bankAccountRepository).findById(id);
+    }
     @AfterEach
     void tearDown() {
     }

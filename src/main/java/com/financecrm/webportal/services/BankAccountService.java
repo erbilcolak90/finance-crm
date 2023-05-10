@@ -62,7 +62,7 @@ public class BankAccountService {
     public DeleteBankAccountPayload deleteBankAccount(DeleteBankAccountInput deleteBankAccountInput) {
 
         var db_bankAccount = bankAccountRepository.findById(deleteBankAccountInput.getId()).orElse(null);
-        if (db_bankAccount != null) {
+        if (db_bankAccount != null && !db_bankAccount.isDeleted()) {
             db_bankAccount.setDeleted(true);
             db_bankAccount.setUpdateDate(new Date());
             bankAccountRepository.save(db_bankAccount);
