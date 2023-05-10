@@ -15,8 +15,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
-
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -51,7 +49,6 @@ public class CustomUserService {
         User userAtDatabase = userRepository.findByEmail(signUpInput.getEmail()).orElse(null);
         if (userAtDatabase == null) {
             User user = new User();
-            Date date = new Date();
             user.setEmail(signUpInput.getEmail());
             user.setPassword(bCryptPasswordEncoder.encode(signUpInput.getPassword()));
             user.setName(signUpInput.getName());
@@ -60,8 +57,8 @@ public class CustomUserService {
             user.setStatus(UserStatus.WAITING);
             user.setRepresentativeEmployeeId(null);
             user.setDeleted(false);
-            user.setCreateDate(date);
-            user.setUpdateDate(date);
+            user.setCreateDate(signUpInput.getDate());
+            user.setUpdateDate(signUpInput.getDate());
             userRepository.save(user);
             log.info(user.getId() + " is signed");
             AddRoleToUserInput addRoleToUserInput = new AddRoleToUserInput(user.getId(), Role.USER.toString());
@@ -69,7 +66,6 @@ public class CustomUserService {
             log.info(user.getId() + " ROLE.USER added ");
             walletAccountService.createWalletAccount(user.getId());
             log.info(user.getId() + " 's wallet created");
-
 
             return true;
         } else {
