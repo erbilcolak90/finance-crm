@@ -86,10 +86,7 @@ class CustomUserServiceTest {
         // 6. adım : bağımlı değişkenlerin çalıştığının kontrolü
         Mockito.verify(userRepository).findByName(username);
     }
-
-
-
-
+    //1. adım : test isimlendirilmesi
     @DisplayName("should return user when username is exist")
     @Tag("findByEmail")
     @Test
@@ -235,10 +232,7 @@ class CustomUserServiceTest {
         Mockito.verify(mapperService).convertToUserPayload(getUserByIdInput);
     }
 
-
     @AfterEach
     void tearDown() {
     }
-
-
 }

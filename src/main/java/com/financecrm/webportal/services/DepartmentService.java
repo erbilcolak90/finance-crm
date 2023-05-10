@@ -40,11 +40,11 @@ public class DepartmentService {
             department.setName(createDepartmentInput.getName().toLowerCase());
             department.setManagerId(createDepartmentInput.getManagerId());
             department.setDeleted(false);
-            departmentRepository.save(department);
+            Department savedDepartment = departmentRepository.save(department);
             log.info("department created");
-            return mapperService.convertToCreateDepartmentPayload(department);
+            return mapperService.convertToCreateDepartmentPayload(savedDepartment);
         } else {
-            return new CreateDepartmentPayload(null, null, null);
+            return null;
         }
     }
 
