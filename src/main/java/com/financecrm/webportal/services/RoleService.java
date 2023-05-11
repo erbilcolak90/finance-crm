@@ -4,6 +4,7 @@ import com.financecrm.webportal.entities.Role;
 import com.financecrm.webportal.input.PaginationInput;
 import com.financecrm.webportal.input.role.CreateRoleInput;
 import com.financecrm.webportal.input.role.DeleteRoleByNameInput;
+import com.financecrm.webportal.input.role.GetAllRolesInput;
 import com.financecrm.webportal.input.role.GetRoleIdByRoleNameInput;
 import com.financecrm.webportal.payload.role.CreateRolePayload;
 import com.financecrm.webportal.payload.role.DeleteRoleByNamePayload;
@@ -31,7 +32,7 @@ public class RoleService {
 
     public String findById(String roleId) {
         Role role = roleRepository.findById(roleId).orElse(null);
-        if (role != null) {
+        if (role != null && !role.isDeleted()) {
             return role.getName();
         } else {
             return null;
@@ -45,9 +46,15 @@ public class RoleService {
             Role role = new Role();
             role.setName(createRoleInput.getRoleName());
             role.setDeleted(false);
-            roleRepository.save(role);
-            log.info(createRoleInput.getRoleName() + " saved");
-            return new CreateRolePayload(createRoleInput.getRoleName() + " role created");
+            Role savedRole = roleRepository.save(role);
+            log.info(savedRole.getName() + " saved");
+            return new CreateRolePayload(savedRole.getName() + " role created");
+        } else if (db_role.isDeleted()) {
+            db_role.setName(createRoleInput.getRoleName());
+            db_role.setDeleted(false);
+            Role savedRole = roleRepository.save(db_role);
+            log.info(savedRole.getName() + " role can usable");
+            return new CreateRolePayload(savedRole.getName() + " role can usable");
         } else {
             return null;
         }
@@ -56,27 +63,27 @@ public class RoleService {
     @Transactional
     public DeleteRoleByNamePayload deleteRoleByName(DeleteRoleByNameInput deleteRoleByNameInput) {
         Role db_role = roleRepository.findByName(deleteRoleByNameInput.getRoleName()).orElse(null);
-        if (db_role != null) {
-            db_role.setDeleted(false);
+        if (db_role != null && !db_role.isDeleted()) {
+            db_role.setDeleted(true);
             roleRepository.save(db_role);
             return new DeleteRoleByNamePayload(true);
         } else {
-            log.info("role is not found");
+            log.info("role is not found or is already deleted");
             return new DeleteRoleByNamePayload(false);
         }
     }
 
     public GetRoleIdByRoleNamePayload getRoleIdByRoleName(GetRoleIdByRoleNameInput getRoleIdByRoleNameInput) {
         Role role = roleRepository.findByName(getRoleIdByRoleNameInput.getRoleName()).orElse(null);
-        if (role != null) {
+        if (role != null && !role.isDeleted()) {
             return new GetRoleIdByRoleNamePayload(role.getId());
         } else {
             return null;
         }
     }
 
-    public Page<Role> getAllRoles(PaginationInput paginationInput) {
-        Pageable pageable = PageRequest.of(paginationInput.getPage(), paginationInput.getSize(), Sort.by(Sort.Direction.valueOf(paginationInput.getSortBy().toString()), paginationInput.getFieldName()));
+    public Page<Role> getAllRoles(GetAllRolesInput getAllRolesInput) {
+        Pageable pageable = PageRequest.of(getAllRolesInput.getPaginationInput().getPage(), getAllRolesInput.getPaginationInput().getSize(), Sort.by(Sort.Direction.valueOf(getAllRolesInput.getPaginationInput().getSortBy().toString()), getAllRolesInput.getPaginationInput().getFieldName()));
         return roleRepository.findByIsDeletedFalse(pageable);
     }
 
