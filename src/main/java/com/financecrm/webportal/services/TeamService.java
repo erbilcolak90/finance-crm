@@ -36,27 +36,33 @@ public class TeamService {
     @Autowired
     private MapperService mapperService;
 
-
     @Transactional
     public CreateTeamPayload createTeam(CreateTeamInput createTeamInput) {
 
         Team db_team = teamRepository.findByName(createTeamInput.getName().toLowerCase());
         Department db_department = departmentRepository.findById(createTeamInput.getDepartmentId()).orElse(null);
 
-
-        if (db_team == null && db_department != null) {
+        if (db_team == null && db_department != null && !db_department.isDeleted()) {
             Team team = new Team();
             team.setName(createTeamInput.getName().toLowerCase());
             team.setDepartmentId(createTeamInput.getDepartmentId());
             team.setManagerId(createTeamInput.getManagerId());
             team.setDeleted(false);
-            teamRepository.save(team);
-            log.info("Team : " + team.getId() + " created");
+            Team savedTeam = teamRepository.save(team);
+            log.info("Team : " + savedTeam.getId() + " created");
 
-            return mapperService.convertToCreateTeamPayload(team);
-        } else {
+            return mapperService.convertToCreateTeamPayload(savedTeam);
+        } else if (db_team == null && db_department == null) {
+            log.info("department is not found");
+            return null;
+        } else if (db_team != null) {
+            log.info("team is already exist");
+            return null;
+        } else if (db_department.isDeleted()) {
+            log.info("department was deleted");
             return null;
         }
+        return null;
     }
 
     @Transactional
@@ -76,7 +82,6 @@ public class TeamService {
     }
 
     public TeamPayload getTeamById(GetTeamByIdInput getTeamByIdInput) {
-
         return mapperService.convertToTeamPayload(teamRepository.findById(getTeamByIdInput.getId()).orElse(null));
     }
 
@@ -101,8 +106,9 @@ public class TeamService {
             teamRepository.save(db_team);
             log.info("team name changed");
             return mapperService.convertToTeamPayload(db_team);
-        } else if (db_team == null || db_team.isDeleted()) {
+        } else if (db_team == null || isExistTeam != null || db_team.isDeleted()) {
             log.info(" team not found or deleted");
+            return null;
         }
         return null;
     }
@@ -117,13 +123,11 @@ public class TeamService {
             db_team.setManagerId(updateTeamManagerInput.getManagerId());
             teamRepository.save(db_team);
             log.info("team manager is update");
-            log.info("employee team id is update");
 
             return mapperService.convertToTeamPayload(db_team);
         } else if (db_team == null || db_employee == null || db_team.isDeleted() || db_employee.isDeleted()) {
             log.info("team or employee not found");
         }
         return null;
-
     }
 }
