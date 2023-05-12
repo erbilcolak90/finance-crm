@@ -51,11 +51,12 @@ public class TradingAccountService {
         if (db_user != null
                 && db_user.getStatus() == UserStatus.APPROVED
                 && !db_user.isDeleted()
+                && db_walletAccount != null
                 && db_walletAccount.getStatus() == WalletAccountStatus.APPROVED
                 && !db_walletAccount.isDeleted()) {
             TradingAccount tradingAccount = new TradingAccount();
             tradingAccount.setUserId(createTradingAccountInput.getUserId());
-            tradingAccount.setApiId(UUID.randomUUID().toString());
+            tradingAccount.setApiId(createTradingAccountInput.getApiId());
             tradingAccount.setWalletAccountId(db_walletAccount.getId());
             tradingAccount.setCurrency(createTradingAccountInput.getCurrency());
             tradingAccount.setBalance(0);
@@ -64,14 +65,13 @@ public class TradingAccountService {
             tradingAccount.setType(createTradingAccountInput.getType());
             tradingAccount.setStatus(TradingAccountStatus.WAITING);
             tradingAccount.setDeleted(false);
-            Date date = new Date();
-            tradingAccount.setCreateDate(date);
-            tradingAccount.setUpdateDate(date);
+            tradingAccount.setCreateDate(createTradingAccountInput.getDate());
+            tradingAccount.setUpdateDate(createTradingAccountInput.getDate());
             log.info(createTradingAccountInput.getUserId() + " is adding to db");
-            tradingAccountRepository.save(tradingAccount);
+            TradingAccount savedTradingAccount = tradingAccountRepository.save(tradingAccount);
             log.info(createTradingAccountInput.getUserId() + " is added to db");
 
-            return mapperService.convertToCreateTradingAccountPayload(tradingAccount);
+            return mapperService.convertToCreateTradingAccountPayload(savedTradingAccount);
 
         } else {
             log.info("user not found ");
@@ -83,7 +83,7 @@ public class TradingAccountService {
     public DeleteTradingAccountPayload deleteTradingAccount(DeleteTradingAccountInput deleteTradingAccountInput) {
 
         TradingAccount db_tradingAccount = tradingAccountRepository.findById(deleteTradingAccountInput.getId()).orElse(null);
-        if (db_tradingAccount != null) {
+        if (db_tradingAccount != null && !db_tradingAccount.isDeleted()) {
             db_tradingAccount.setDeleted(true);
             db_tradingAccount.setUpdateDate(new Date());
             log.info(deleteTradingAccountInput.getId() + " : is  deleting");
@@ -98,12 +98,12 @@ public class TradingAccountService {
     }
 
     public TradingAccountPayload getTradingAccountById(GetTradingAccountByIdInput getTradingAccountByIdInput) {
-        TradingAccountPayload payload = null;
-        Optional<TradingAccount> db_tradingAccount = tradingAccountRepository.findById(getTradingAccountByIdInput.getId());
-        if (db_tradingAccount.isPresent()) {
-            payload = mapperService.convertToTradingAccountPayload(db_tradingAccount.get());
+        TradingAccount tradingAccount = tradingAccountRepository.findById(getTradingAccountByIdInput.getId()).orElse(null);
+        if(tradingAccount != null && !tradingAccount.isDeleted()){
+            return mapperService.convertToTradingAccountPayload(tradingAccount);
+        }else{
+            return null;
         }
-        return payload;
     }
 
     public Page<TradingAccountPayload> getAllTradingAccountsByUserId(GetAllTradingAccountsByUserIdInput getAllTradingAccountsByUserIdInput) {
@@ -118,7 +118,12 @@ public class TradingAccountService {
     }
 
     public TradingAccount findById(String tradingAccountId) {
-        return tradingAccountRepository.findById(tradingAccountId).orElse(null);
+        TradingAccount tradingAccount = tradingAccountRepository.findById(tradingAccountId).orElse(null);
+        if(tradingAccount != null && !tradingAccount.isDeleted()){
+            return tradingAccount;
+        }else{
+            return null;
+        }
     }
 
     @Async
