@@ -5,4 +5,5 @@ public enum TradingAccountClassification {
     SILVER,
     GOLD,
     VIP,
+    TEST,
 }

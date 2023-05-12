@@ -8,6 +8,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -19,4 +21,5 @@ public class CreateTradingAccountInput {
     private int leverage;
     private TradingAccountClassification classification;
     private TradingAccountType type;
+    private Date date = new Date();
 }
