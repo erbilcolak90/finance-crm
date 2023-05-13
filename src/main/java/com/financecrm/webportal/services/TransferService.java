@@ -50,7 +50,7 @@ public class TransferService {
         Transfer db_transfer = transferRepository.findById(getTransferByIdInput.getId()).orElse(null);
 
         if (db_transfer != null && !db_transfer.isDeleted()) {
-            return mapperService.convertToGetTransferPayload(db_transfer);
+            return mapperService.convertToTransferPayload(db_transfer);
         } else {
             return null;
         }
@@ -63,7 +63,7 @@ public class TransferService {
                         getAllTransfersByUserIdInput.getPaginationInput().getFieldName()));
         Page<Transfer> transferPage = transferRepository.findByUserIdAndIsDeletedFalse(getAllTransfersByUserIdInput.getUserId(), pageable);
 
-        return transferPage.map(transfer -> mapperService.convertToGetTransferPayload(transfer));
+        return transferPage.map(transfer -> mapperService.convertToTransferPayload(transfer));
     }
 
     @Transactional
@@ -80,7 +80,7 @@ public class TransferService {
         // transfer tipi withdrawsa inputtaki fromAccountId = walletAccount, walletAccount.Amount u ile input.Amount kontrol edilecek
         // transfer işlemi onaya düşmeli direkt transfer işlemi balance lar arasında yapılamaz.
         // ayrıca input.to kullanıcının bankAccountlarından getirilip kontrol edilecek.
-        if (createTransferInput.getType().equals(TransferType.WITHDRAW)) {
+        else if (createTransferInput.getType().equals(TransferType.WITHDRAW)) {
             db_walletAccount = walletAccountService.findById(createTransferInput.getFromAccountId());
             db_bankAccount = bankAccountService.findById(createTransferInput.getToAccountId());
             if (db_walletAccount != null &&
@@ -90,6 +90,7 @@ public class TransferService {
                     db_walletAccount.getBalance() >= createTransferInput.getAmount()) {
                 //from wallet to bank
                 transfer = new Transfer();
+                transfer.setUserId(createTransferInput.getUserId());
                 transfer.setFromAccountId(createTransferInput.getFromAccountId());
                 transfer.setToAccountId(createTransferInput.getToAccountId());
                 transfer.setType(TransferType.WITHDRAW);
@@ -100,11 +101,13 @@ public class TransferService {
                 transfer.setAmount(createTransferInput.getAmount());
                 transfer.setCreateDate(createTransferInput.getDate());
 
-                transferRepository.save(transfer);
-                eventPublisher.publishEvent(new TransferEvent(transfer, TransferType.WITHDRAW, db_walletAccount.getUserId()));
-                return mapperService.convertToCreateTransferPayload(transfer);
+                Transfer savedTransfer = transferRepository.save(transfer);
+                eventPublisher.publishEvent(new TransferEvent(savedTransfer, TransferType.WITHDRAW, db_walletAccount.getUserId()));
+                return mapperService.convertToCreateTransferPayload(savedTransfer);
             }
-
+            else{
+                return null;
+            }
         }
 
         // transfer tipi deposit ise fromAccountId = user ın bank accountları ile kıyaslanacak. Amount kontrolü pozitiflik için yapılacak.
@@ -120,6 +123,7 @@ public class TransferService {
                     createTransferInput.getAmount() > 0) {
                 transfer = new Transfer();
                 //from bank to wallet
+                transfer.setUserId(createTransferInput.getUserId());
                 transfer.setFromAccountId(db_bankAccount.getId());
                 transfer.setToAccountId(db_walletAccount.getId());
                 transfer.setType(TransferType.DEPOSIT);
@@ -128,9 +132,12 @@ public class TransferService {
                 transfer.setAmount(createTransferInput.getAmount());
                 transfer.setCreateDate(createTransferInput.getDate());
 
-                transferRepository.save(transfer);
-                eventPublisher.publishEvent(new TransferEvent(transfer, TransferType.DEPOSIT, db_walletAccount.getUserId()));
-                return mapperService.convertToCreateTransferPayload(transfer);
+                Transfer savedTransfer = transferRepository.save(transfer);
+                eventPublisher.publishEvent(new TransferEvent(savedTransfer, TransferType.DEPOSIT, db_walletAccount.getUserId()));
+                return mapperService.convertToCreateTransferPayload(savedTransfer);
+            }
+            else{
+                return null;
             }
 
         }
@@ -150,6 +157,7 @@ public class TransferService {
                     db_walletAccount.getStatus().equals(WalletAccountStatus.APPROVED) &&
                     db_walletAccount.getBalance() >= createTransferInput.getAmount()) {
                 transfer = new Transfer();
+                transfer.setUserId(createTransferInput.getUserId());
                 transfer.setFromAccountId(db_walletAccount.getId());
                 transfer.setToAccountId(db_tradingAccount.getId());
                 transfer.setType(TransferType.VIREMENT_TO_TRADING_ACCOUNT);
@@ -157,17 +165,19 @@ public class TransferService {
                 transfer.setStatus(TransferStatus.APPROVED);
                 transfer.setAmount(createTransferInput.getAmount());
                 transfer.setCreateDate(createTransferInput.getDate());
-                transferRepository.save(transfer);
+                Transfer savedTransfer = transferRepository.save(transfer);
 
-                db_tradingAccount.setBalance(db_tradingAccount.getBalance() + transfer.getAmount());
+                db_tradingAccount.setBalance(db_tradingAccount.getBalance() + savedTransfer.getAmount());
                 db_tradingAccount.setUpdateDate(createTransferInput.getDate());
                 tradingAccountService.save(db_tradingAccount);
 
-                db_walletAccount.setBalance(db_walletAccount.getBalance() - transfer.getAmount());
+                db_walletAccount.setBalance(db_walletAccount.getBalance() - savedTransfer.getAmount());
                 db_walletAccount.setUpdateDate(createTransferInput.getDate());
                 walletAccountService.save(db_walletAccount);
-                eventPublisher.publishEvent(new TransferEvent(transfer, TransferType.VIREMENT_TO_TRADING_ACCOUNT, db_walletAccount.getUserId()));
-                return mapperService.convertToCreateTransferPayload(transfer);
+                eventPublisher.publishEvent(new TransferEvent(savedTransfer, TransferType.VIREMENT_TO_TRADING_ACCOUNT, db_walletAccount.getUserId()));
+                return mapperService.convertToCreateTransferPayload(savedTransfer);
+            }else{
+                return null;
             }
 
         } else if (createTransferInput.getType().equals(TransferType.VIREMENT_TO_WALLET)) {
@@ -180,6 +190,7 @@ public class TransferService {
                     db_walletAccount.getStatus().equals(WalletAccountStatus.APPROVED) &&
                     db_tradingAccount.getBalance() >= createTransferInput.getAmount()) {
                 transfer = new Transfer();
+                transfer.setUserId(createTransferInput.getUserId());
                 transfer.setFromAccountId(db_tradingAccount.getId());
                 transfer.setToAccountId(db_walletAccount.getId());
                 transfer.setType(TransferType.VIREMENT_TO_WALLET);
@@ -187,14 +198,14 @@ public class TransferService {
                 transfer.setStatus(TransferStatus.APPROVED);
                 transfer.setAmount(createTransferInput.getAmount());
                 transfer.setCreateDate(createTransferInput.getDate());
+                Transfer savedTransfer = transferRepository.save(transfer);
+                setVirementToWalletBalance(createTransferInput.getAmount(), db_tradingAccount.getId(), db_walletAccount.getId(), createTransferInput.getDate());
 
-                setVirementToWalletBalance(createTransferInput.getAmount(), db_tradingAccount.getId(), db_walletAccount.getId(), transfer, createTransferInput.getDate());
-                eventPublisher.publishEvent(new TransferEvent(transfer, TransferType.VIREMENT_TO_WALLET, db_walletAccount.getUserId()));
-                return mapperService.convertToCreateTransferPayload(transfer);
+                eventPublisher.publishEvent(new TransferEvent(savedTransfer, TransferType.VIREMENT_TO_WALLET, db_walletAccount.getUserId()));
+                return mapperService.convertToCreateTransferPayload(savedTransfer);
+            }else{
+                return null;
             }
-
-        } else {
-            return new CreateTransferPayload();
         }
         return null;
     }
@@ -203,6 +214,7 @@ public class TransferService {
     public DeleteTransferPayload deleteTransfer(DeleteTransferInput deleteTransferInput) {
         Transfer transfer = transferRepository.findById(deleteTransferInput.getId()).orElse(null);
         if (transfer != null &&
+                !transfer.isDeleted() &&
                 transfer.getType().equals(TransferType.DEPOSIT) &&
                 !transfer.getStatus().equals(TransferStatus.APPROVED)) {
             transfer.setDeleted(true);
@@ -217,7 +229,7 @@ public class TransferService {
     }
 
     @Async
-    public void setVirementToWalletBalance(double amount, String db_tradingAccountId, String db_walletAccountId, Transfer transfer, Date date) throws InterruptedException {
+    public void setVirementToWalletBalance(double amount, String db_tradingAccountId, String db_walletAccountId, Date date) throws InterruptedException {
 
         Thread.sleep(5_000);
         TradingAccount db_tradingAccount = tradingAccountService.findById(db_tradingAccountId);
@@ -225,8 +237,6 @@ public class TransferService {
 
 
         if (db_tradingAccount.getBalance() >= amount) {
-
-            transferRepository.save(transfer);
 
             db_tradingAccount.setBalance(db_tradingAccount.getBalance() - amount);
             db_tradingAccount.setUpdateDate(date);
