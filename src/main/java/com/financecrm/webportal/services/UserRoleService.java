@@ -34,7 +34,7 @@ public class UserRoleService {
     
     public List<String> getUserRolesByUserId(GetUserRolesByUserIdInput getUserRolesByUserIdInput) {
         User user = customUserService.findByUserId(getUserRolesByUserIdInput.getUserId());
-        if (user != null) {
+        if (user != null && !user.isDeleted()) {
             List<UserRole> roleList = userRoleRepository.getUserRolesByUserId(getUserRolesByUserIdInput.getUserId());
             List<String> roleNameList = new ArrayList<>();
 
@@ -52,7 +52,7 @@ public class UserRoleService {
     public AddRoleToUserPayload addRoleToUser(AddRoleToUserInput addRoleToUserInput) {
         User user = customUserService.findByUserId(addRoleToUserInput.getUserId());
         Role db_role = roleRepository.findByName(addRoleToUserInput.getRoleName()).orElse(null);
-        if (user != null && db_role != null) {
+        if (user != null && db_role != null && !user.isDeleted() && !db_role.isDeleted()) {
             List<UserRole> userRoles = userRoleRepository.findByUserIdAndRoleId(addRoleToUserInput.getUserId(), db_role.getId());
             if (userRoles.stream().anyMatch(userRole -> userRole.getRoleId().equals(db_role.getId()))) {
                 return new AddRoleToUserPayload("User is already has this role");
@@ -60,8 +60,8 @@ public class UserRoleService {
             UserRole userRole = new UserRole();
             userRole.setUserId(user.getId());
             userRole.setRoleId(db_role.getId());
-            userRoleRepository.save(userRole);
-            log.info(userRole.getRoleId() + " role is added to user " + userRole.getUserId());
+            UserRole savedUserRole = userRoleRepository.save(userRole);
+            log.info(savedUserRole.getRoleId() + " role is added to user " + savedUserRole.getUserId());
             return new AddRoleToUserPayload(addRoleToUserInput.getRoleName() + " added to " + addRoleToUserInput.getUserId());
         } else {
             return new AddRoleToUserPayload("User or rolename not found");
@@ -72,7 +72,7 @@ public class UserRoleService {
     public DeleteRoleFromUserPayload deleteRoleFromUser(DeleteRoleFromUserInput deleteRoleFromUserInput) {
         User user = customUserService.findByUserId(deleteRoleFromUserInput.getUserId());
         Role db_role = roleRepository.findByName(deleteRoleFromUserInput.getRoleName()).orElse(null);
-        if (user != null && db_role != null) {
+        if (user != null && db_role != null && !user.isDeleted() && !db_role.isDeleted()) {
             List<UserRole> userRoles = userRoleRepository.findByUserIdAndRoleId(deleteRoleFromUserInput.getUserId(), deleteRoleFromUserInput.getRoleName());
             userRoles.stream().filter(userRole -> userRole.getRoleId().equals(db_role.getId()))
                     .forEach(userRole -> {
@@ -80,8 +80,8 @@ public class UserRoleService {
                         userRoleRepository.save(userRole);
                         log.info(userRole.getRoleId() + " deleted from " + userRole.getUserId());
                     });
+                return new DeleteRoleFromUserPayload(true);
 
-            return new DeleteRoleFromUserPayload(true);
         } else {
             log.info("user or role not found");
             return new DeleteRoleFromUserPayload(false);

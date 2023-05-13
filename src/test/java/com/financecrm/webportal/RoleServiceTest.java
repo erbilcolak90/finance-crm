@@ -253,7 +253,8 @@ class RoleServiceTest {
     }
 
     @AfterEach
-    void tearDown() {
+    void tearDown() throws Exception {
+        MockitoAnnotations.openMocks(this).close();
     }
 
 }
