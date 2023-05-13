@@ -77,7 +77,7 @@ public class MapperService {
         return modelMapper.map(walletAccount, WalletAccountPayload.class);
     }
 
-    public TransferPayload convertToGetTransferPayload(Transfer transfer) {
+    public TransferPayload convertToTransferPayload(Transfer transfer) {
         return modelMapper.map(transfer, TransferPayload.class);
     }
 

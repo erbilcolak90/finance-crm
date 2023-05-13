@@ -4,4 +4,5 @@ public enum TransferStatus {
     APPROVED,
     WAITING,
     DENIED,
+    TEST,
 }

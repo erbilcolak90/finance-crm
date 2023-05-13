@@ -4,5 +4,6 @@ public enum TransferType {
     WITHDRAW,
     DEPOSIT,
     VIREMENT_TO_TRADING_ACCOUNT,
-    VIREMENT_TO_WALLET
+    VIREMENT_TO_WALLET,
+    TEST,
 }
