@@ -8,4 +8,5 @@ public enum UserValidationDocumentType {
     DRIVING_LICENSE_BACK,
     ADDRESS_PROOF,
     BILL,
+    TEST,
 }

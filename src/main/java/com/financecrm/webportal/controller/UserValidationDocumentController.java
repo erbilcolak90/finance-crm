@@ -28,8 +28,8 @@ public class UserValidationDocumentController {
     private final UserValidationDocumentService userValidationDocumentService;
 
     @PostMapping("/getUserValidationDocumentById")
-    public ResponseEntity<UserValidationDocumentPayload> getUserValidationDocumentById(@RequestBody GetUserValidationDocumentByIdInput getUserValidationDocumentByIdInput, HttpServletRequest request) {
-        UserValidationDocumentPayload result = userValidationDocumentService.getUserValidationDocumentById(getUserValidationDocumentByIdInput, request);
+    public ResponseEntity<UserValidationDocumentPayload> getUserValidationDocumentById(@RequestBody GetUserValidationDocumentByIdInput getUserValidationDocumentByIdInput) {
+        UserValidationDocumentPayload result = userValidationDocumentService.getUserValidationDocumentById(getUserValidationDocumentByIdInput);
         if (result != null) {
             return ResponseEntity.ok(result);
         } else {
