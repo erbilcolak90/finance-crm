@@ -37,9 +37,7 @@ public class UserValidationDocumentService {
     @Autowired
     private MapperService mapperService;
 
-    public UserValidationDocumentPayload getUserValidationDocumentById(GetUserValidationDocumentByIdInput getUserValidationDocumentByIdInput, HttpServletRequest request) {
-        String token = jwtTokenFilter.getJwtFromRequest(request);
-        String userIdFromToken = tokenManager.parseUserIdFromToken(token);
+    public UserValidationDocumentPayload getUserValidationDocumentById(GetUserValidationDocumentByIdInput getUserValidationDocumentByIdInput) {
 
         UserValidationDocument db_document = userValidationDocumentRepository.findById(getUserValidationDocumentByIdInput.getId()).orElse(null);
         if (db_document != null && !db_document.isDeleted()) {
@@ -77,13 +75,12 @@ public class UserValidationDocumentService {
             userValidationDocument.setType(addUserValidationDocumentInput.getType());
             userValidationDocument.setStatus(UserValidationDocumentStatus.WAITING);
             userValidationDocument.setDeleted(false);
-            Date date = new Date();
-            userValidationDocument.setCreateDate(date);
-            userValidationDocument.setUpdateDate(date);
-            userValidationDocumentRepository.save(userValidationDocument);
-            log.info("user validation document saved" + userValidationDocument.getId());
+            userValidationDocument.setCreateDate(addUserValidationDocumentInput.getDate());
+            userValidationDocument.setUpdateDate(addUserValidationDocumentInput.getDate());
+            UserValidationDocument savedUserValidationDocument= userValidationDocumentRepository.save(userValidationDocument);
+            log.info("user validation document saved" + savedUserValidationDocument.getId());
 
-            return mapperService.convertToUserValidationDocumentPayload(userValidationDocument);
+            return mapperService.convertToUserValidationDocumentPayload(savedUserValidationDocument);
 
         } else {
             return null;

@@ -4,4 +4,5 @@ public enum UserValidationDocumentStatus {
     APPROVED,
     WAITING,
     DENIED,
+    TEST,
 }
