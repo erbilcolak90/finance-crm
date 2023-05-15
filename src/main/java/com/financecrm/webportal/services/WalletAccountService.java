@@ -32,8 +32,8 @@ public class WalletAccountService {
         return walletAccountRepository.findByUserId(userId).orElse(null);
     }
 
-    public WalletAccount findById(String fromAccountId) {
-        return walletAccountRepository.findById(fromAccountId).orElse(null);
+    public WalletAccount findById(String id) {
+        return walletAccountRepository.findById(id).orElse(null);
     }
 
     @Transactional
