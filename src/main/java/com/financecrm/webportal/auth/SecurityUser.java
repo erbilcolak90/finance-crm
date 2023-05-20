@@ -1,5 +1,6 @@
 package com.financecrm.webportal.auth;
 
+import com.financecrm.webportal.entities.Role;
 import com.financecrm.webportal.entities.User;
 import com.financecrm.webportal.entities.UserRole;
 import com.financecrm.webportal.repositories.RoleRepository;
@@ -33,7 +34,7 @@ public class SecurityUser implements UserDetails {
         List<UserRole> roleList = userRoleRepository.getUserRolesByUserId(user.getId());
 
         for(UserRole role : roleList){
-            roleRepository.findById(role.getId()).ifPresent(db_role -> roles.add(new SimpleGrantedAuthority("ROLE_" + db_role.getName())));
+            roleRepository.findById(role.getRoleId()).ifPresent(db_role -> roles.add(new SimpleGrantedAuthority("ROLE_" + db_role.getName())));
         }
 
         return roles;
