@@ -4,7 +4,6 @@ import com.financecrm.webportal.entities.User;
 import com.financecrm.webportal.enums.UserStatus;
 import com.financecrm.webportal.input.user.UpdateUserStatusInput;
 import com.financecrm.webportal.repositories.UserRepository;
-import com.financecrm.webportal.services.admin.UpdateUserStatusService;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;

@@ -1,8 +1,6 @@
 package com.financecrm.webportal.security;
 
 import com.financecrm.webportal.auth.CustomUserDetailsService;
-import com.financecrm.webportal.auth.JwtTokenFilter;
-import jakarta.websocket.Endpoint;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;

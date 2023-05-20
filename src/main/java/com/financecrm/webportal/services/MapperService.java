@@ -34,7 +34,6 @@ public class MapperService {
     private UserRoleService userRoleService;
 
     public UserValidationDocumentPayload convertToUserValidationDocumentPayload(UserValidationDocument userValidationDocument) {
-
         return modelMapper.map(userValidationDocument, UserValidationDocumentPayload.class);
     }
 

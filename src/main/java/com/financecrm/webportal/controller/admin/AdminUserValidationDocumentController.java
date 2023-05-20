@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/admin/userValidationDocument")
-public class AdminUserValidationDocumentStatusController {
+public class AdminUserValidationDocumentController {
 
     @Autowired
     private AdminUserValidationDocumentStatusService adminUserValidationDocumentStatusService;
