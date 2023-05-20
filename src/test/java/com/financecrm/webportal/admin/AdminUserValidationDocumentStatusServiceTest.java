@@ -5,7 +5,7 @@ import com.financecrm.webportal.enums.UserValidationDocumentStatus;
 import com.financecrm.webportal.enums.UserValidationDocumentType;
 import com.financecrm.webportal.input.uservalidationdocument.UpdateUserValidationDocumentStatusInput;
 import com.financecrm.webportal.repositories.UserValidationDocumentRepository;
-import com.financecrm.webportal.services.admin.UpdateUserValidationDocumentStatusService;
+import com.financecrm.webportal.services.admin.AdminUserValidationDocumentStatusService;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
@@ -17,10 +17,10 @@ import java.util.Date;
 import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
-class UpdateUserValidationDocumentStatusServiceTest {
+class AdminUserValidationDocumentStatusServiceTest {
 
     @InjectMocks
-    private UpdateUserValidationDocumentStatusService updateUserValidationDocumentStatusService;
+    private AdminUserValidationDocumentStatusService adminUserValidationDocumentStatusService;
     @Mock
     private UserValidationDocumentRepository userValidationDocumentRepository;
 
@@ -41,7 +41,7 @@ class UpdateUserValidationDocumentStatusServiceTest {
         Mockito.when(userValidationDocumentRepository.findById(updateUserValidationDocumentStatusInput.getDocumentId())).thenReturn(Optional.of(new UserValidationDocument()));
         Mockito.when(userValidationDocumentRepository.save(ArgumentMatchers.any(UserValidationDocument.class))).thenReturn(savedUserValidationDocument);
 
-        UserValidationDocument expectedResult = updateUserValidationDocumentStatusService.updateUserValidationDocumentStatus(updateUserValidationDocumentStatusInput);
+        UserValidationDocument expectedResult = adminUserValidationDocumentStatusService.updateUserValidationDocumentStatus(updateUserValidationDocumentStatusInput);
 
         assertNotNull(expectedResult);
         assertEquals(UserValidationDocumentStatus.APPROVED, expectedResult.getStatus());
@@ -58,7 +58,7 @@ class UpdateUserValidationDocumentStatusServiceTest {
 
         Mockito.when(userValidationDocumentRepository.findById(updateUserValidationDocumentStatusInput.getDocumentId())).thenReturn(Optional.empty());
 
-        UserValidationDocument expectedResult = updateUserValidationDocumentStatusService.updateUserValidationDocumentStatus(updateUserValidationDocumentStatusInput);
+        UserValidationDocument expectedResult = adminUserValidationDocumentStatusService.updateUserValidationDocumentStatus(updateUserValidationDocumentStatusInput);
 
         assertNull(expectedResult);
 

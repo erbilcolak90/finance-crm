@@ -12,7 +12,7 @@ import java.util.Date;
 
 @Service
 @RequiredArgsConstructor
-public class UpdateUserValidationDocumentStatusService {
+public class AdminUserValidationDocumentStatusService {
 
     @Autowired
     private UserValidationDocumentRepository userValidationDocumentRepository;
