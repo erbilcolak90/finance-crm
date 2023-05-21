@@ -8,11 +8,11 @@
 		<version>3.0.4</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.financecrm</groupId>
-	<artifactId>webportal</artifactId>
+	<groupId>me.fxapp</groupId>
+	<artifactId>crmbackend-crm</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>webportal</name>
-	<description>crm system for finance</description>
+	<name>crmbackend</name>
+	<description>crm system for fx</description>
 	<properties>
 		<java.version>17</java.version>
 	</properties>
