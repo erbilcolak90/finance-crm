@@ -8,10 +8,10 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @SpringBootApplication
 @EnableAsync
 @EnableMongoRepositories
-public class CrmBackend {
+public class WebportalApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(CrmBackend.class, args);
+		SpringApplication.run(WebportalApplication.class, args);
 	}
 
 }
